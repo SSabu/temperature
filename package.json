@@ -1,0 +1,22 @@
+{
+  "name": "temperature",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SSabu/temperature.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SSabu/temperature/issues"
+  },
+  "homepage": "https://github.com/SSabu/temperature#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
