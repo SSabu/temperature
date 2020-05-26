@@ -14,11 +14,35 @@
 
 .line {
   fill: none;
-  stroke-width: 2px;
+  stroke-width: 1.5px;
+  clip-path: url(#clip);
+}
+
+.line2 {
+  fill: none;
+  stroke-width: 1.5px;
+  clip-path: url(#clip);
 }
 
 .grid line {
   stroke: lightgrey;
   stroke-opacity: 0.7;
   shape-rendering: crispEdges;
+}
+
+.overlay {
+	fill: none;
+	pointer-events: all;
+}
+
+.lineHoverText {
+	text-shadow:
+	-2px -2px 0 #fff,
+	2px -2px 0 #fff,
+	-2px 2px 0 #fff,
+	2px 2px 0 #fff;
+}
+
+.hoverCircle {
+	opacity: .75;
 }
