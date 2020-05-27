@@ -190,7 +190,6 @@ function drawChart(data) {
                 .attr("transform","translate(" + (3*margin.left) + "," + (margin.top) + ")");
 
   const svg1 = svg.append("svg")
-                .attr("id","clip")
                 .attr("width", width)
                 .attr("height", height);
 

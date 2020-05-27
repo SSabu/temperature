@@ -15,13 +15,11 @@
 .line {
   fill: none;
   stroke-width: 1.5px;
-  clip-path: url(#clip);
 }
 
 .line2 {
   fill: none;
   stroke-width: 1.5px;
-  clip-path: url(#clip);
 }
 
 .grid line {
