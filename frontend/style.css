@@ -46,3 +46,7 @@
 .hoverCircle {
 	opacity: .75;
 }
+
+#title {
+  text-align: center;
+}

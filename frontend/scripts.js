@@ -1,4 +1,4 @@
-fetch("/json/tempe_temp.json").then(res => res.json()).then((data) => drawChart(data));
+fetch("/json/phoenix_temp.json").then(res => res.json()).then((data) => drawChart(data));
 
 drawMap();
 
@@ -44,9 +44,99 @@ function drawMap() {
        .attr("cx", function (d) { return projection(d)[0]; })
        .attr("cy", function (d) { return projection(d)[1]; })
        .attr("r", "3px")
+       .attr("id", function(d,i){ var ids=["tempe", "mesa", "phoenix"]; return ids[i]; })
        .attr("fill", function(d,i) { var colors = ["red", "green", "blue"]; return colors[i]; });
-  });
 
+    svg.append("text")
+       .text("Maricopa County Temperature Stations")
+       .attr("x", function(d) { var textSelection = d3.selectAll('text'); var textLength = textSelection._groups[0][textSelection._groups[0].length-1].getComputedTextLength(); return (width - textLength-10)/2; })
+       .attr("y", 40);
+
+   svg.append("text")
+      .text("(click on station to see data)")
+      .attr("x", function(d) { var textSelection = d3.selectAll('text'); var textLength = textSelection._groups[0][textSelection._groups[0].length-1].getComputedTextLength(); return (width - textLength-10)/2; })
+      .attr("y", 55)
+      .style("font-size","13px");
+
+   svg.append("circle")
+      .attr("cx", 200)
+      .attr("cy", 260)
+      .attr("r", 3)
+      .attr("fill", "blue");
+
+  svg.append("text")
+     .attr("x", 205)
+     .attr("y", 264)
+     .style("font-size", "11px")
+     .text("Phoenix ASOS Station");
+
+  svg.append("circle")
+     .attr("cx", 200)
+     .attr("cy", 280)
+     .attr("r", 3)
+     .attr("fill", "red");
+
+  svg.append("text")
+     .attr("x", 205)
+     .attr("y", 284)
+     .style("font-size", "11px")
+     .text("Tempe Station");
+
+  svg.append("circle")
+     .attr("cx", 200)
+     .attr("cy", 300)
+     .attr("r", 3)
+     .attr("fill", "green");
+
+  svg.append("text")
+     .attr("x", 205)
+     .attr("y", 304)
+     .style("font-size", "11px")
+     .text("Mesa Station");
+
+    d3.select("#phoenix")
+      .attr("cursor","pointer")
+      .on("click", function() {
+
+        // console.log("phoenix");
+
+        $("#chart").empty();
+        $("#title").empty();
+        $("#title").text("Phoenix ASOS Station Max and Min Temperature Data");
+
+        fetch("/json/phoenix_temp.json").then(res => res.json()).then((data) => drawChart(data));
+
+      });
+
+    d3.select("#mesa")
+      .attr("cursor","pointer")
+      .on("click", function() {
+
+        // console.log("mesa");
+
+        $("#chart").empty();
+        $("#title").empty();
+        $("#title").text("Mesa Station Max and Min Temperature Data");
+
+        fetch("/json/mesa_temp.json").then(res => res.json()).then((data) => drawChart(data));
+
+      });
+
+    d3.select("#tempe")
+      .attr("cursor","pointer")
+      .on("click", function() {
+
+        // console.log("tempe");
+
+        $("#chart").empty();
+        $("#title").empty();
+        $("#title").text("Tempe Station Max and Min Temperature Data");
+
+        fetch("/json/tempe_temp.json").then(res => res.json()).then((data) => drawChart(data));
+
+      });
+
+  });
 };
 
 function drawChart(data) {
@@ -97,7 +187,7 @@ function drawChart(data) {
                 .attr("viewBox", "0 0 " + (width+100) + " 750")
                 .classed("svg-content", true)
                 .append("g")
-                .attr("transform","translate(" + (3*margin.left) + "," + (2*margin.top) + ")");
+                .attr("transform","translate(" + (3*margin.left) + "," + (margin.top) + ")");
 
   const svg1 = svg.append("svg")
                 .attr("id","clip")
@@ -167,6 +257,19 @@ function drawChart(data) {
        .attr("class", "axis axis--y")
        .call(d3.axisLeft(y));
 
+  focus.append("text")
+       .attr("transform", "rotate(-90)")
+       .attr("y", 0 - (2.5*margin.left))
+       .attr("x", 0 - (height/2))
+       .attr("dy", "1em")
+       .style("text-anchor", "middle")
+       .text("Temperature (°F)");
+
+  focus.append("text")
+       .attr("transform", "translate("+(width/2)+","+ (height + margin.top + 20)+")")
+       .style("text-anchor", "middle")
+       .text("Time");
+
   function make_y_gridlines() {
     return d3.axisLeft(y)
         .ticks(5) };
@@ -194,7 +297,14 @@ function drawChart(data) {
          .on("click", brushed)
          .call(brush)
          .attr("transform", "translate(0,"+ (4*mini_height - 20)+")")
-         .call(brush.move, [new Date(1905,0,1),new Date(1906,0,1)].map(x));
+         .call(brush.move, [new Date(1905,0,1),new Date(1910,0,1)].map(x));
+
+ context.append("text")
+        .text("adjust extent and position of gray box to highlight data on main chart")
+        .attr("x", 0)
+        .attr("y", 0)
+        .style("font-size","11px")
+        .attr("transform", "translate(0,"+ (5*mini_height+30)+")");
 
  function updateCurrentExtent() {
    	currentExtent = d3.brushSelection(this);
