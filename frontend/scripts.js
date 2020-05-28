@@ -301,6 +301,8 @@ function drawChart(data) {
 
   function brushed() {
 
+    if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
+
     var s = d3.event.selection;
 
     var p = currentExtent,
