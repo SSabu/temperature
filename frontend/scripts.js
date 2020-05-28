@@ -98,8 +98,6 @@ function drawMap() {
       .attr("cursor","pointer")
       .on("click", function() {
 
-        // console.log("phoenix");
-
         $("#chart").empty();
         $("#title").empty();
         $("#title").text("Phoenix ASOS Station Max and Min Temperature Data");
@@ -112,8 +110,6 @@ function drawMap() {
       .attr("cursor","pointer")
       .on("click", function() {
 
-        // console.log("mesa");
-
         $("#chart").empty();
         $("#title").empty();
         $("#title").text("Mesa Station Max and Min Temperature Data");
@@ -125,8 +121,6 @@ function drawMap() {
     d3.select("#tempe")
       .attr("cursor","pointer")
       .on("click", function() {
-
-        // console.log("tempe");
 
         $("#chart").empty();
         $("#title").empty();
@@ -220,7 +214,7 @@ function drawChart(data) {
 
   var brush = d3.brushX()
                 .extent([[leftHandle,0],[rightHandle, mini_height]])
-                .on("brush start", updateCurrentExtent)
+                .on("brush start", brushed)
                 .on("brush end", brushed);
 
   var zoom = d3.zoom()
@@ -305,12 +299,8 @@ function drawChart(data) {
         .style("font-size","11px")
         .attr("transform", "translate(0,"+ (5*mini_height+30)+")");
 
- function updateCurrentExtent() {
-   	currentExtent = d3.brushSelection(this);
-   	}
-
   function brushed() {
-    if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
+
     var s = d3.event.selection;
 
     var p = currentExtent,
