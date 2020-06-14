@@ -1,18 +1,24 @@
-fetch("/json/phoenix_temp.json").then(res => res.json()).then((data) => drawChart(data));
+fetch("/json/phoenix_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
 
 drawMap();
 
 function drawMap() {
 
-  const width = 350;
-  const height = 350;
+  const width = 150;
+  const height = 150;
 
   const svg = d3.select("#map").append("svg")
                 .classed("svg-container", true)
                 .attr("preserveAspectRatio", "xMinYMin meet")
-                .attr("viewBox", "0 0 350 350")
+                .attr("viewBox", "0 0 850 850")
                 .classed("svg-content", true)
-                .append("g");
+                .append("g")
+                .attr("transform", "translate(180,20)");
+
+  // const svg = d3.select("#map").append("svg")
+  //               .attr("wdith", width)
+  //               .attr("height", height)
+  //               .append("g");
 
   const tempe = [-111.929, 33.4197];
   const mesa = [-111.818, 33.4114];
@@ -100,9 +106,11 @@ function drawMap() {
 
         $("#chart").empty();
         $("#title").empty();
+        $("#bars").empty();
+        $("#axis").empty();
         $("#title").text("Phoenix ASOS Station Max and Min Temperature Data");
 
-        fetch("/json/phoenix_temp.json").then(res => res.json()).then((data) => drawChart(data));
+        fetch("/json/phoenix_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
 
       });
 
@@ -112,9 +120,11 @@ function drawMap() {
 
         $("#chart").empty();
         $("#title").empty();
+        $("#bars").empty();
+        $("#axis").empty();
         $("#title").text("Mesa Station Max and Min Temperature Data");
 
-        fetch("/json/mesa_temp.json").then(res => res.json()).then((data) => drawChart(data));
+        fetch("/json/mesa_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
 
       });
 
@@ -124,9 +134,11 @@ function drawMap() {
 
         $("#chart").empty();
         $("#title").empty();
+        $("#bars").empty();
+        $("#axis").empty();
         $("#title").text("Tempe Station Max and Min Temperature Data");
 
-        fetch("/json/tempe_temp.json").then(res => res.json()).then((data) => drawChart(data));
+        fetch("/json/tempe_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
 
       });
 
@@ -135,7 +147,12 @@ function drawMap() {
 
 function drawChart(data) {
 
-  var parseTime = d3.timeParse("%Y-%m-%d");
+  // console.log(data);
+
+  var parseTime = d3.timeParse("%Y-%m-%d"),
+  formatDate = d3.timeFormat("%Y-%m-%d"),
+  bisectDate = d3.bisector(d => d.Date).left,
+  formatValue = d3.format(",.0f");
 
   data.forEach(function(el) {
     el.Date = parseTime(el.Date);
@@ -143,8 +160,17 @@ function drawChart(data) {
     el.MinTemperature = +parseInt(el.MinTemperature);
   });
 
+  var firstDate = data[0]["Date"];
+  // console.log(firstDate);
+  var firstYear = firstDate.getFullYear();
+  var firstMonth = firstDate.getMonth();
+  var firstDay = firstDate.getDate();
+  var nextYear = firstYear + 5;
+
+  var copy = ["MaxTemperature","MinTemperature"];
+
   var margin = {top: 20, right: 20, bottom: 30, left: 20},
-    width = 1140 - margin.left - margin.right,
+    width = 940 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
   var mini_margin = {top: 10, right: 10, bottom: 10, left: 20},
@@ -178,10 +204,10 @@ function drawChart(data) {
   const svg = d3.select("#chart").append("svg")
                 .classed("svg-container", true)
                 .attr("preserveAspectRatio", "xMinYMin meet")
-                .attr("viewBox", "0 0 " + (width+100) + " 750")
+                .attr("viewBox", "0 0 " + (width+100) + " 690")
                 .classed("svg-content", true)
                 .append("g")
-                .attr("transform","translate(" + (3*margin.left) + "," + (margin.top) + ")");
+                .attr("transform","translate(" + (3*margin.left) + "," + (margin.top/2) + ")");
 
   const svg1 = svg.append("svg")
                 .attr("width", width)
@@ -193,16 +219,22 @@ function drawChart(data) {
   mini_x.domain(d3.extent(data, function(d) { return d.Date; }));
   mini_y.domain([0, d3.max(data, function(d) { return Math.max(d.MaxTemperature, d.MinTemperature); })]);
 
-  x.nice();
-  y.nice();
+  // x.nice();
+  // y.nice();
 
   mini_x.nice();
+
+  var colorScale = d3.scaleLinear()
+                     .domain(d3.range(30, 130, 10))
+                     .range(['steelblue', 'gray', 'indianred']);
+
+ console.log(d3.range(30, 120, 10));
 
   var focus = svg.append("g")
                  .attr("class", "focus");
 
   var focus1 = svg1.append("g")
-                 .attr("class", "focus");
+                 .attr("class", "focus1");
 
   var context = svg.append("g")
                    .attr("class", "context")
@@ -214,14 +246,7 @@ function drawChart(data) {
 
   var brush = d3.brushX()
                 .extent([[leftHandle,0],[rightHandle, mini_height]])
-                .on("brush start", brushed)
                 .on("brush end", brushed);
-
-  var zoom = d3.zoom()
-    .scaleExtent([1, Infinity])
-    .translateExtent([[0, 0], [width, height]])
-    .extent([[0, 0], [width, height]])
-    .on("zoom", zoomed);
 
   focus1.append("g")
       .attr("class", "grid")
@@ -232,12 +257,14 @@ function drawChart(data) {
   focus1.append("path")
     .data([data])
     .attr("class", "line")
+    // .style("stroke", function(d) { return colorScale(d.MaxTemperature)})
     .style("stroke", "red")
     .attr("d", valueline);
 
   focus1.append("path")
       .data([data])
       .attr("class", "line2")
+      // .style("stroke", function(d) { return colorScale(d.MaxTemperature)})
       .style("stroke", "steelblue")
       .attr("d", valueline2);
 
@@ -270,7 +297,7 @@ function drawChart(data) {
   context.append("path")
          .data([data])
          .attr("class","line")
-         .style("stroke", "red")
+         .style("stroke","red")
          .attr("transform", "translate(0,"+ (4*mini_height - 20)+")")
          .attr("d", mini_valueLine);
 
@@ -289,76 +316,406 @@ function drawChart(data) {
          .attr("class", "brush")
          .on("click", brushed)
          .call(brush)
-         .attr("transform", "translate(0,"+ (4*mini_height - 20)+")")
-         .call(brush.move, [new Date(1905,0,1),new Date(1910,0,1)].map(x));
+         .attr("transform", "translate(0,"+ (4*mini_height - 20)+")");
 
- context.append("text")
-        .text("adjust extent and position of gray box to highlight data on main chart")
-        .attr("x", 0)
-        .attr("y", 0)
-        .style("font-size","11px")
-        .attr("transform", "translate(0,"+ (5*mini_height+30)+")");
+  var brushResizePath = function(d) {
+    var e = +(d.type == "e"),
+        x = e ? 1 : -1,
+        y = mini_height / 2;
+      return "M" + (.5 * x) + "," + y + "A6,6 0 0 " + e + " " + (6.5 * x) + "," + (y + 6) + "V" + (2 * y - 6) + "A6,6 0 0 " + e + " " + (.5 * x) + "," + (2 * y) + "Z" + "M" + (2.5 * x) + "," + (y + 8) + "V" + (2 * y - 8) + "M" + (4.5 * x) + "," + (y + 8) + "V" + (2 * y - 8);
+  }
+
+  var handleRight = brushg.selectAll(".handle-custom-w")
+                     .data([{type: "w"}])
+                     .enter().append("path")
+                     .attr("class","handle-custom-w")
+                     .attr("stroke","#000")
+                     .attr("cursor", "ew-resize")
+                     .attr("d", brushResizePath);
+                     // .attr("d", d3.symbol().type(d3.symbolTriangle).size(75));
+
+  var handleLeft = brushg.selectAll(".handle-custom-e")
+                     .data([{type: "e"}])
+                     .enter().append("path")
+                     .attr("class","handle-custom-e")
+                     .attr("stroke","#000")
+                     .attr("cursor", "ew-resize")
+                     .attr("d", brushResizePath);
+                     // .attr("d", d3.symbol().type(d3.symbolTriangle).size(75));
+
+  brushg.call(brush.move, [new Date(firstYear+5, firstMonth-1, firstDay), new Date(nextYear+5, firstMonth-1, firstDay)].map(x));
+
+  context.append("text")
+         .text("*adjust extent and position of gray box to highlight data on main chart")
+         .attr("x", 0)
+         .attr("y", 0)
+         .style("font-size","11px")
+         .attr("transform", "translate(0,"+ (5*mini_height+16)+")");
 
   function brushed() {
-
-    if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
 
     var s = d3.event.selection;
 
     var p = currentExtent,
-      xYear = x(new Date(1905,0,1)),
+      xYear = mini_x(new Date(firstYear-5, firstMonth, firstDay)),
       left,
       right;
 
+    if (s===null) {
+
+      handleRight.attr("display", "none");
+      handleLeft.attr("display", "none");
+
+    }
+
     if (d3.event.selection && s[1] - s[0] >= xYear) {
-    if (p[0] == s[0] && p[1] < s[1]) { // case where right handle is extended
-      if (s[1] >= width) {
-        left = width - xYear
-      right = width
-      s = [left, right];
+
+      // rotate(-90)  rotate(90)
+
+      handleRight.attr("display", null).attr("transform","translate(" + [ s[0], -(mini_height/4) ] + ")").attr("stroke","black").attr("fill","black");
+      handleLeft.attr("display", null).attr("transform","translate(" + [ s[1], -(mini_height/4) ] + ")").attr("stroke","black").attr("fill","black");
+
+      if (p[0] == s[0] && p[1] < s[1]) {
+        if (s[1] >= width) {
+          left = width - xYear;
+          right = width;
+          s = [left, right];
+        }
+        else {
+          left = s[1] - xYear/2;
+          right = s[1] + xYear/2;
+          s = [left, right];
+        }
       }
-      else {
-        left = s[1] - xYear/2
-      right = s[1] + xYear/2
-      s = [left, right];
+      else if (p[1] == s[1] && p[0] > s[0]) {
+        if (s[0] <= 0) {
+          s = [0, xYear];
+        }
+        else {
+          s = [s[0] - xYear/2, s[0] + xYear/2];
+        }
       }
-    }
-    else if (p[1] == s[1] && p[0] > s[0]) { // case where left handle is extended
-      if (s[0] <= 0) {
-        s = [0, xYear];
-      }
-      else {
-        s = [s[0] - xYear/2, s[0] + xYear/2]
-      }
-    }
     }
 
-    if (!d3.event.selection){ // if no selection took place and the brush was just clicked
-    var mouse = d3.mouse(this)[0];
-    if (mouse < xYear/2) {
-      s = [0,xYear];
-    } else if (mouse + xYear/2 > width) {
-      s = [width-xYear, width];
-    }
-    else {
-    s = [d3.mouse(this)[0]-xYear/2, d3.mouse(this)[0]+xYear/2];
-    }
-    }
+    if (s===null) { return; }
+    else { x.domain(s.map(mini_x.invert, mini_x)); }
 
-    x.domain(s.map(mini_x.invert, mini_x));
+    // context.select(".line").classed("active", function(d) { return s[0] <= d && d <= s[1]; });
+    // context.select(".line2").classed("active", function(d) { return s[0] <= d && d <= s[1]; });
+
     focus1.select(".line").attr("d", valueline);
     focus1.select(".line2").attr("d", valueline2);
     focus.select(".axis--x").call(xAxis);
+
     }
 
-  function zoomed() {
-	  if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
-	  var t = d3.event.transform;
-	  x.domain(t.rescaleX(xAxis).domain());
-	  focus1.select(".line").attr("d", valueline);
-    focus1.select(".line2").attr("d", valueline2);
-	  focus.select(".axis--x").call(xAxis);
-	  context.select(".brush").call(brush.move, mini_x.range().map(t.invertX, t));
-	 }
+    // tooltip call
+
+    // tooltip(copy);
+
+    function tooltip(copy) {
+
+      var labels = focus.selectAll(".lineHoverText")
+        .data(copy);
+
+      labels.enter().append("text")
+        .attr("class", "lineHoverText")
+        .style("fill", "black")
+        .attr("text-anchor", "start")
+        .attr("font-size",12)
+        .attr("dy", (_, i) => 1 + i * 2 + "em")
+        .merge(labels);
+
+      var circles = focus.selectAll(".hoverCircle")
+        .data(copy);
+
+      circles.enter().append("circle")
+        .attr("class", "hoverCircle")
+        .style("fill", "black")
+        .attr("r", 2.5)
+        .merge(circles);
+
+      svg.selectAll(".overlay")
+        .on("mouseover", function() { focus.style("display", null); })
+        .on("mouseout", function() { focus.style("display", "none"); })
+        .on("mousemove", mousemove);
+
+      function mousemove() {
+
+        var x0 = x.invert(d3.mouse(this)[0]),
+          i = bisectDate(data, x0, 1),
+          d0 = data[i - 1],
+          d1 = data[i],
+                  d = x0 - d0.Date > d1.Date - x0 ? d1 : d0;
+
+        // console.log(i, d0, d1);
+
+        focus.select(".lineHover")
+          .attr("transform", "translate(" + x(d.Date) + "," + height + ")");
+
+        focus.select(".lineHoverDate")
+          .attr("transform",
+            "translate(" + x(d.Date) + "," + (height + margin.bottom) + ")")
+          .text(formatDate(d.Date));
+
+        focus.selectAll(".hoverCircle")
+          .attr("cy", e => y(d[e]))
+          .attr("cx", x(d.Date));
+
+        focus.selectAll(".lineHoverText")
+          .attr("transform",
+            "translate(" + (x(d.Date)) + "," + height / 2.5 + ")")
+          .text(e => e + " " + "º" + formatValue(d[e]));
+
+        x(d.Date) > (width - width / 4)
+          ? focus1.selectAll("text.lineHoverText")
+            .attr("text-anchor", "end")
+            .attr("dx", -10)
+          : focus1.selectAll("text.lineHoverText")
+            .attr("text-anchor", "start")
+            .attr("dx", 10)
+      }
+    }
+
+};
+
+function createBars(data) {
+
+  var parseDate = d3.timeParse("%Y-%m-%d");
+
+  function twoDigit(n) { return (n < 10 ? '0' : '') + n; }
+
+  data.forEach(function(obj) {
+    let date = obj["Date"];
+
+    obj["Date"] = '' + date.getFullYear() + "-" + twoDigit(date.getMonth()+1) + "-" + twoDigit(date.getDate());
+  });
+
+  var dataObj = _.groupBy(data, function(obj) {
+    return obj["Date"].slice(0,4);
+  });
+
+  const years = Object.keys(dataObj);
+
+  const posObj = {};
+
+  years.forEach(function(year) {
+
+    var first90pos = 0;
+    var last90pos = 0;
+    var first100pos = 0;
+    var last100pos = 0;
+
+    var pos90arr = [];
+    var pos100arr = [];
+
+    dataObj[year].forEach(function(el, index) {
+      el['Year'] = parseInt(year);
+      el['MaxTemperature'] = parseInt(el['MaxTemperature']);
+      el['Date'] = parseDate(el['Date']);
+      var date = el['Date'];
+      var firstJan = new Date(year, 0, 1);
+      var differenceInMilliSeconds = date - firstJan;
+      el['Day'] = differenceInMilliSeconds / (1000 * 60 * 60 * 24 ) + 1;
+
+      if (el['MaxTemperature'] >= 90) {
+        pos90arr.push(index);
+      }
+      if (el['MaxTemperature'] >= 100) {
+        pos100arr.push(index);
+      }
+    });
+
+    first90pos = pos90arr[0];
+    last90pos = pos90arr[pos90arr.length-1]+1;
+
+    first100pos = pos100arr[0];
+    last100pos = pos100arr[pos100arr.length-1]+1;
+
+    posObj[year] = [first90pos, last90pos, first100pos, last100pos];
+
+  });
+
+  var dataset90 = [];
+  var dataset100 = [];
+
+  years.forEach(function(year, index) {
+
+    var yearDataObj = dataObj[year].slice(posObj[year][0], posObj[year][1]);
+
+    yearDataObj.forEach(function(d) {
+      d.Year = +d.Year;
+      d.Day = +d.Day;
+      d.MaxTemperature = +d.MaxTemperature;
+      d.Index = index;
+    });
+
+    dataset90.push(...yearDataObj);
+
+  });
+
+  years.forEach(function(year, index) {
+    var yrDataObject = dataObj[year].slice(posObj[year][2], posObj[year][3]);
+
+    yrDataObject.forEach(function(d) {
+      d.Year = +d.Year;
+      d.Day = +d.Day;
+      d.MaxTemperature = +d.MaxTemperature;
+      d.Index = index;
+    });
+
+    dataset100.push(...yrDataObject);
+
+  });
+
+  var colorScale = d3.scaleLinear()
+                     .domain(d3.range(80, 130, 10))
+                     .range(['steelblue', 'gray', 'indianred']);
+
+  var times = d3.range(365);
+
+  var margin = {top: 40, right: 50, bottom: 70, left: 50};
+
+  var w = 255;
+
+  var gridSize = 3;
+
+  var h = 2400;
+
+  var svg = d3.select("#bars")
+              .append("svg")
+              .attr("width", 335)
+              .attr("height", h + margin.left + margin.right)
+              .append("g")
+              .attr("transform", "translate(40,-10)");
+
+  let distance = 20;
+
+  years.forEach(function(year) {
+
+    var yearLine = svg.append("line")
+                      .attr("x1", 0)
+                      .attr("x2", 274)
+                      .attr("y1", distance+3)
+                      .attr("y2", distance+3)
+                      .attr("stroke-width", "0.65px")
+                      .attr("stroke", "black");
+
+    var begLine = svg.append("line")
+                     .attr("x1", 0)
+                     .attr("x2", 0)
+                     .attr("y1", distance)
+                     .attr("y2", distance+6)
+                     .attr("stroke-width", "0.65px")
+                     .attr("stroke", "black");
+
+    var endLine = svg.append("line")
+                     .attr("x1", 274)
+                     .attr("x2", 274)
+                     .attr("y1", distance)
+                     .attr("y2", distance+6)
+                     .attr("stroke-width", "0.65px")
+                     .attr("stroke", "black");
+
+    var yearLabel = svg.append("text")
+                       .text(year)
+                       .attr("class", "yearLabel")
+                       .attr("x", -10)
+                       .attr("y", distance+6)
+                       .style("text-anchor", "end");
+
+    distance += 20;
+
+  });
+
+  var tempBar = svg.selectAll(".hour")
+                   .data(dataset90)
+                   .enter()
+                   .append("rect")
+                   .attr("x", function(d) { return (d.Day-1)*gridSize/4; })
+                   .attr("y", function(d) { return (d.Index+1)*20; })
+                   .attr("class", "hour")
+                   .attr("width", gridSize/4)
+                   .attr("height", gridSize*2)
+                   .style("fill", function(d) { return colorScale(d.MaxTemperature); });
+
+   const buttons = d3.selectAll('input');
+
+   var monthAxis = d3.select("#axis")
+                     .append("svg")
+                     .attr("width", 400)
+                     .attr("height", 50)
+                     .append("g")
+                     .attr("transform", "translate(40,10)");
+
+    monthAxis.append("line")
+             .attr("x1", 0)
+             .attr("x2", 274)
+             .attr("y1", 1)
+             .attr("y2", 1)
+             .attr("stroke-width", "0.65px")
+             .attr("stroke", "black");
+
+   // console.log(274/12);
+
+   var monthTicks = d3.range(0,13,1);
+
+   var monthLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"]
+
+   monthTicks.forEach(function(tick, index) {
+
+     monthAxis.append("line")
+              .attr("x1", tick*22.83)
+              .attr("x2", tick*22.83)
+              .attr("y1", -3)
+              .attr("y2", 5)
+              .attr("stroke-width", "0.65px")
+              .attr("stroke", "black");
+
+    monthAxis.append("text")
+             .text(monthLabels[index])
+             .attr("class", "yearLabel")
+             .attr("x", tick*22.83)
+             .attr("y", 15)
+             .style("text-anchor", "middle");
+
+   });
+
+   buttons.on('change', function(d) {
+
+     if (this.value === "90") {
+
+       svg.selectAll(".hour").remove();
+
+       var tempBar = svg.selectAll(".hour")
+                        .data(dataset90)
+                        .enter()
+                        .append("rect")
+                        .attr("x", function(d) { return (d.Day-1)*gridSize/4; })
+                        .attr("y", function(d) { return (d.Index+1)*20; })
+                        .attr("class", "hour")
+                        .attr("width", gridSize/4)
+                        .attr("height", gridSize*2)
+                        .style("fill", function(d) { return colorScale(d.MaxTemperature); });
+     }
+
+     if (this.value === "100") {
+
+       svg.selectAll(".hour").remove();
+
+       var tempBar = svg.selectAll(".hour")
+                        .data(dataset100)
+                        .enter()
+                        .append("rect")
+                        .attr("x", function(d) { return (d.Day-1)*gridSize/4; })
+                        .attr("y", function(d) { return (d.Index+1)*20; })
+                        .attr("class", "hour")
+                        .attr("width", gridSize/4)
+                        .attr("height", gridSize*2)
+                        .style("fill", function(d) { return colorScale(d.MaxTemperature); });
+     }
+   });
+
+
 
 };

@@ -7,6 +7,7 @@
       <link rel="stylesheet" href="style.css">
       <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.10.2/underscore-min.js"></script>
       <script src="https://d3js.org/d3.v5.min.js"></script>
     </head>
     <body>
@@ -15,7 +16,23 @@
           <div id="title">Phoenix ASOS Station Max and Min Temperature Data</div>
           <div id="chart"></div>
         </div>
-        <div class="column2" id="map"><div id="note"></div>
+        <div class="column2">
+          <div class="container selector">
+            <form>
+              <label class="radio-inline">
+                <span>Length of year with temperatures: </span>
+                <input type="radio" name="optradio" value="90" style="height: 8px; margin: 0px 0px 0px 0px;" checked>90° or above
+              </label>
+              <label class="radio-inline">
+                <input type="radio" name="optradio" value="100" style="height: 8px; margin: 0px 0px 0px 0px;">100° or above
+              </label>
+            </form>
+          </div>
+          <div class="scroll">
+            <div id="bars"></div>
+          </div>
+          <div id="axis"></div>
+          <div id="map"></div>
         </div>
       </div>
       <script src="scripts.js"></script>
