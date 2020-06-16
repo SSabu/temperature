@@ -100,7 +100,7 @@ body {
 div.scroll {
   /* background-color: #fed9ff; */
   width: 550px;
-  height: 500px;
+  height: 525px;
   overflow: auto;
   text-align: justify;
   border: 1px solid black;
@@ -111,7 +111,7 @@ div.scroll {
 }
 
 .container-box {
-  padding-top: 20px;
+  /* padding-top: 20px; */
   display: inline-block;
 }
 
@@ -121,11 +121,11 @@ label {
 
 .dropdown {
   width:300px;
-  padding-top:30px;
+  padding-top:15px;
 }
 
 #modal {
-  padding-top:30px;
+  padding-top:15px;
   padding-left:20px;
   float: left;
 }
