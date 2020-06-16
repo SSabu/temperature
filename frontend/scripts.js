@@ -6,7 +6,7 @@ fetch("/json/county.json").then(res => res.json()).then(function(data) { drawLMa
 
 function drawLMap(json) {
 
-  var tempMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([33.2918, -112.1991], 6);
+  var tempMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([33.2918, -112.1991], 7);
 
   L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/256/{z}/{x}/{y}?access_token={accessToken}', {
   id: 'mapbox/light-v10',
@@ -81,7 +81,7 @@ function drawLMap(json) {
      },
      pointToLayer: function(feature, latlng){
        return L.circleMarker(latlng, {
-         radius: 2,
+         radius: 3.25,
          fillColor: getColor(feature.properties.name),
          color: "#000",
          weight: 0.25,
@@ -132,44 +132,45 @@ function drawLMap(json) {
    });
 
    const legend = d3.select("#legend").append("svg")
-                    .attr("width", 100)
+                    .attr("width", 200)
                     .attr("height", 200)
-                    .append("g");
+                    .append("g")
+                    .attr("transform", "translate(10, 80)");
 
     legend.append("circle")
-          .attr("cx", 12)
-          .attr("cy", 40)
-          .attr("r", 2)
+          .attr("cx", 22)
+          .attr("cy", 50)
+          .attr("r", 4)
           .attr("fill", "red");
 
    legend.append("text")
-         .attr("x", 17)
-         .attr("y", 42)
-         .style("font-size", "8px")
+         .attr("x", 30)
+         .attr("y", 54)
+         .style("font-size", "13px")
          .text("Phoenix ASOS Station");
 
    legend.append("circle")
-         .attr("cx", 12)
-         .attr("cy", 50)
-         .attr("r", 2)
+         .attr("cx", 22)
+         .attr("cy", 65)
+         .attr("r", 4)
          .attr("fill", "blue");
 
    legend.append("text")
-         .attr("x", 17)
-         .attr("y", 52)
-         .style("font-size", "8px")
+         .attr("x", 30)
+         .attr("y", 69)
+         .style("font-size", "13px")
          .text("Tempe Station");
 
    legend.append("circle")
-         .attr("cx", 12)
-         .attr("cy", 60)
-         .attr("r", 2)
+         .attr("cx", 22)
+         .attr("cy", 80)
+         .attr("r", 4)
          .attr("fill", "green");
 
    legend.append("text")
-         .attr("x", 17)
-         .attr("y", 62)
-         .style("font-size", "8px")
+         .attr("x", 30)
+         .attr("y", 84)
+         .style("font-size", "13px")
          .text("Mesa Station");
 
 };
@@ -697,6 +698,8 @@ function createBars(data) {
 
   const years = Object.keys(dataObj);
 
+  // console.log(dataObj);
+
   const posObj = {};
 
   years.forEach(function(year) {
@@ -778,26 +781,26 @@ function createBars(data) {
 
   var w = 255;
 
-  var gridSize = 3;
+  var gridSize = 5.4;
 
-  var h = 2400;
+  var h = 3650;
 
   var svg = d3.select("#bars")
               .append("svg")
-              .attr("width", 335)
+              .attr("width", 540)
               .attr("height", h + margin.left + margin.right)
               .append("g")
               .attr("transform", "translate(40,-10)");
 
-  let distance = 20;
+  let distance = 30;
 
   years.forEach(function(year) {
 
     var yearLine = svg.append("line")
                       .attr("x1", 0)
-                      .attr("x2", 274)
-                      .attr("y1", distance+3)
-                      .attr("y2", distance+3)
+                      .attr("x2", 490)
+                      .attr("y1", distance+5)
+                      .attr("y2", distance+5)
                       .attr("stroke-width", "0.65px")
                       .attr("stroke", "black");
 
@@ -805,26 +808,26 @@ function createBars(data) {
                      .attr("x1", 0)
                      .attr("x2", 0)
                      .attr("y1", distance)
-                     .attr("y2", distance+6)
+                     .attr("y2", distance+9)
                      .attr("stroke-width", "0.65px")
                      .attr("stroke", "black");
 
     var endLine = svg.append("line")
-                     .attr("x1", 274)
-                     .attr("x2", 274)
+                     .attr("x1", 490)
+                     .attr("x2", 490)
                      .attr("y1", distance)
-                     .attr("y2", distance+6)
+                     .attr("y2", distance+9)
                      .attr("stroke-width", "0.65px")
                      .attr("stroke", "black");
 
     var yearLabel = svg.append("text")
                        .text(year)
                        .attr("class", "yearLabel")
-                       .attr("x", -10)
-                       .attr("y", distance+6)
+                       .attr("x", -8)
+                       .attr("y", distance+8)
                        .style("text-anchor", "end");
 
-    distance += 20;
+    distance += 30;
 
   });
 
@@ -833,7 +836,7 @@ function createBars(data) {
                    .enter()
                    .append("rect")
                    .attr("x", function(d) { return (d.Day-1)*gridSize/4; })
-                   .attr("y", function(d) { return (d.Index+1)*20; })
+                   .attr("y", function(d) { return (d.Index+1)*30; })
                    .attr("class", "hour")
                    .attr("width", gridSize/4)
                    .attr("height", gridSize*2)
@@ -843,16 +846,16 @@ function createBars(data) {
 
    var monthAxis = d3.select("#axis")
                      .append("svg")
-                     .attr("width", 350)
+                     .attr("width", 600)
                      .attr("height", 50)
                      .append("g")
                      .attr("transform", "translate(40,10)");
 
     monthAxis.append("line")
              .attr("x1", 0)
-             .attr("x2", 274)
-             .attr("y1", 1)
-             .attr("y2", 1)
+             .attr("x2", 490)
+             .attr("y1", 5)
+             .attr("y2", 5)
              .attr("stroke-width", "0.65px")
              .attr("stroke", "black");
 
@@ -863,18 +866,18 @@ function createBars(data) {
    monthTicks.forEach(function(tick, index) {
 
    monthAxis.append("line")
-            .attr("x1", tick*22.83)
-            .attr("x2", tick*22.83)
+            .attr("x1", tick*40.83)
+            .attr("x2", tick*40.83)
             .attr("y1", -3)
-            .attr("y2", 5)
+            .attr("y2", 13)
             .attr("stroke-width", "0.65px")
             .attr("stroke", "black");
 
   monthAxis.append("text")
            .text(monthLabels[index])
            .attr("class", "yearLabel")
-           .attr("x", tick*22.83)
-           .attr("y", 15)
+           .attr("x", tick*40.83)
+           .attr("y", 30)
            .style("text-anchor", "middle");
 
    });
@@ -890,7 +893,7 @@ function createBars(data) {
                         .enter()
                         .append("rect")
                         .attr("x", function(d) { return (d.Day-1)*gridSize/4; })
-                        .attr("y", function(d) { return (d.Index+1)*20; })
+                        .attr("y", function(d) { return (d.Index+1)*30; })
                         .attr("class", "hour")
                         .attr("width", gridSize/4)
                         .attr("height", gridSize*2)
@@ -906,7 +909,7 @@ function createBars(data) {
                         .enter()
                         .append("rect")
                         .attr("x", function(d) { return (d.Day-1)*gridSize/4; })
-                        .attr("y", function(d) { return (d.Index+1)*20; })
+                        .attr("y", function(d) { return (d.Index+1)*30; })
                         .attr("class", "hour")
                         .attr("width", gridSize/4)
                         .attr("height", gridSize*2)

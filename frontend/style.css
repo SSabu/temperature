@@ -11,22 +11,23 @@
 
 .column3 {
   float: left;
-  width: 55%;
+  /* width: 50%; */
 }
 
 .column4 {
   float: left;
-  width: 45%
+  padding-eft: 20px;
+  /* width: 50% */
 }
 
 #map {
-  height: 150px;
-  width: 150px;
-  border: 0.65px solid black;
+  height: 250px;
+  width: 250px;
+  border: 0.95px solid black;
 }
 
 #mapTitle {
-  font-size: 9px;
+  font-size: 14px;
 }
 
 .mapBox {
@@ -72,7 +73,7 @@
 
 #title {
   text-align: center;
-  font-size: 12px;
+  font-size: 18px;
 }
 
 * {
@@ -94,33 +95,26 @@
 
 div.scroll {
   background-color: #fed9ff;
-  width: 350px;
-  height: 125px;
+  width: 550px;
+  height: 300px;
   overflow: auto;
   text-align: justify;
   border: 1px solid black;
 }
 
 .yearLabel {
-  font-size: 8px;
+  font-size: 13px;
 }
 
 .selector, input {
-  font: 8px sans-serif;
+  font: 14px sans-serif;
   vertical-align: middle;
 }
 
 .container {
-  padding-top: 15px;
+  padding-top: 20px;
 }
 
 label {
   margin-bottom: 0px !important;
-}
-
-.popup {
-    background: rgba(0, 0, 0, 0) !important;
-    border: none !important;
-    font-size: 8px;
-    box-shadow: none !important;
 }
