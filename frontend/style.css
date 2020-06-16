@@ -140,3 +140,7 @@ label {
   text-align: center;
   /* overflow: hidden; */
 }
+
+#controls {
+  padding-left: 40px;
+}
