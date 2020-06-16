@@ -110,13 +110,9 @@ div.scroll {
   font-size: 13px;
 }
 
-.selector, input {
-  font: 14px sans-serif;
-  vertical-align: middle;
-}
-
-.container {
+.container-box {
   padding-top: 20px;
+  display: inline-block;
 }
 
 label {
@@ -164,4 +160,9 @@ label {
 }
 .btn-primary:active{
   box-shadow: none;
+}
+
+#box-title {
+  /* padding: 0px !important; */
+  float: left;
 }

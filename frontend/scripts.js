@@ -158,6 +158,12 @@ function drawLMap(json) {
       _.defer(tempMap.invalidateSize.bind(tempMap));
     })
 
+    // modal.on('shown.bs.modal', function(){
+    //     setTimeout(function() {
+    //         map.invalidateSize();
+    //    }, 10);
+    // })
+
    // stationLayer.on("click", function(e) {
    //
    //   if (e.layer.feature.properties.name === "Mesa Station") {
