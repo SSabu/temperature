@@ -15,7 +15,9 @@ function generateData(event) {
     $("#title").empty();
     $("#bars").empty();
     $("#axis").empty();
-    $("#title").text("Phoenix ASOS Station Max and Min Temperature Data");
+    $("#variations").empty();
+    $("#title").text("Phoenix ASOS Station: Max and Min Temperature Data");
+    $("#variations").text("Comparison of Seasonal Variation: Tempe Station");
 
     fetch("/json/phoenix_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
 
@@ -25,7 +27,9 @@ function generateData(event) {
     $("#title").empty();
     $("#bars").empty();
     $("#axis").empty();
-    $("#title").text("Tempe Station Max and Min Temperature Data");
+    $("#variations").empty();
+    $("#title").text("Tempe Station: Max and Min Temperature Data");
+    $("#variations").text("Comparison of Seasonal Variation: Tempe Station");
 
     fetch("/json/tempe_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
 
@@ -37,7 +41,9 @@ function generateData(event) {
     $("#title").empty();
     $("#bars").empty();
     $("#axis").empty();
-    $("#title").text("Mesa Station Max and Min Temperature Data");
+    $("#variations").empty();
+    $("#title").text("Mesa Station: Max and Min Temperature Data");
+    $("#variations").text("Comparison of Seasonal Variation: Mesa Station");
 
     fetch("/json/mesa_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
 
