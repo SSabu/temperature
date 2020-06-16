@@ -32,11 +32,23 @@ function drawLMap(json) {
           }
         };
 
+  function setWeight(stype) {
+          switch (stype) {
+            case 'Tempe Station':
+              return  0.25;
+            case 'Mesa Station':
+              return 0.25;
+            case 'Phoenix ASOS Station':
+              return 1;
+          }
+        };
+
   var stations = [{
     "type": "Feature",
     "properties": {
         "name": "Tempe Station",
         "show_on_map": true,
+        "selected": false,
       },
     "geometry": {
         "type": "Point",
@@ -47,6 +59,7 @@ function drawLMap(json) {
     "properties": {
         "name": "Mesa Station",
         "show_on_map": true,
+        "selected": false,
     },
     "geometry": {
         "type": "Point",
@@ -58,6 +71,7 @@ function drawLMap(json) {
     "properties": {
         "name": "Phoenix ASOS Station",
         "show_on_map": true,
+        "selected": true,
     },
     "geometry": {
         "type": "Point",
@@ -84,7 +98,7 @@ function drawLMap(json) {
          radius: 3.25,
          fillColor: getColor(feature.properties.name),
          color: "#000",
-         weight: 0.25,
+         weight: setWeight(feature.properties.name),
          opacity: 1,
          fillOpacity: 0.8
        })
@@ -94,7 +108,13 @@ function drawLMap(json) {
 
    stationLayer.on("click", function(e) {
 
+     console.log(e);
+
      if (e.layer.feature.properties.name === "Mesa Station") {
+
+       stationLayer.setStyle({weight:0.25});
+
+       e.layer.setStyle({weight:1});
 
        $("#chart").empty();
        $("#title").empty();
@@ -104,9 +124,21 @@ function drawLMap(json) {
 
        fetch("/json/mesa_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
 
+       d3.select("#tempe").attr("font-weight", null);
+       d3.select("#mesa").attr("font-weight", "bold");
+       d3.select("#phoenix").attr("font-weight", null);
+
+       d3.select("#phoenix_cirlce").attr("stroke", null);
+       d3.select("#tempe_circle").attr("stroke", null);
+       d3.select("#mesa_circle").attr("stroke", "black");
+
      }
 
      if (e.layer.feature.properties.name === "Phoenix ASOS Station") {
+
+       stationLayer.setStyle({weight:0.25});
+
+       e.layer.setStyle({weight:1});
 
        $("#chart").empty();
        $("#title").empty();
@@ -116,9 +148,21 @@ function drawLMap(json) {
 
        fetch("/json/phoenix_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
 
+       d3.select("#tempe").attr("font-weight", null);
+       d3.select("#mesa").attr("font-weight", null);
+       d3.select("#phoenix").attr("font-weight", "bold");
+
+       d3.select("#phoenix_cirlce").attr("stroke", "black");
+       d3.select("#tempe_circle").attr("stroke", null);
+       d3.select("#mesa_circle").attr("stroke", null);
+
      }
 
      if (e.layer.feature.properties.name === "Tempe Station") {
+
+       stationLayer.setStyle({weight:0.25});
+
+       e.layer.setStyle({weight:1});
 
        $("#chart").empty();
        $("#title").empty();
@@ -127,6 +171,14 @@ function drawLMap(json) {
        $("#title").text("Tempe Station Max and Min Temperature Data");
 
        fetch("/json/tempe_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
+
+       d3.select("#tempe").attr("font-weight", "bold");
+       d3.select("#mesa").attr("font-weight", null);
+       d3.select("#phoenix").attr("font-weight", null);
+
+       d3.select("#phoenix_cirlce").attr("stroke", null);
+       d3.select("#tempe_circle").attr("stroke", "black");
+       d3.select("#mesa_circle").attr("stroke", null);
 
      }
    });
@@ -141,23 +193,29 @@ function drawLMap(json) {
           .attr("cx", 22)
           .attr("cy", 50)
           .attr("r", 4)
+          .attr("id","phoenix_circle")
+          .attr("stroke", "black")
           .attr("fill", "red");
 
    legend.append("text")
          .attr("x", 30)
          .attr("y", 54)
+         .attr("id", "phoenix")
          .style("font-size", "13px")
+         .attr("font-weight","bold")
          .text("Phoenix ASOS Station");
 
    legend.append("circle")
          .attr("cx", 22)
          .attr("cy", 65)
          .attr("r", 4)
+         .attr("id","tempe_circle")
          .attr("fill", "blue");
 
    legend.append("text")
          .attr("x", 30)
          .attr("y", 69)
+         .attr("id", "tempe")
          .style("font-size", "13px")
          .text("Tempe Station");
 
@@ -165,11 +223,13 @@ function drawLMap(json) {
          .attr("cx", 22)
          .attr("cy", 80)
          .attr("r", 4)
+         .attr("id","mesa_circle")
          .attr("fill", "green");
 
    legend.append("text")
          .attr("x", 30)
          .attr("y", 84)
+         .attr("id","mesa")
          .style("font-size", "13px")
          .text("Mesa Station");
 
