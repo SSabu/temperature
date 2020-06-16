@@ -682,6 +682,8 @@ function drawChart(data) {
 
 function createBars(data) {
 
+  $("input[value=90]").prop("checked",true);
+
   var parseDate = d3.timeParse("%Y-%m-%d");
 
   function twoDigit(n) { return (n < 10 ? '0' : '') + n; }
