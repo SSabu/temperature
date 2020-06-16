@@ -4,6 +4,46 @@ fetch("/json/county.json").then(res => res.json()).then(function(data) { drawLMa
 
 // drawMap();
 
+var menu = document.getElementById("stationMenu");
+menu.addEventListener("change", generateData);
+
+function generateData(event) {
+  if (menu.value == 'phoenix') {
+    // alert(1);
+
+    $("#chart").empty();
+    $("#title").empty();
+    $("#bars").empty();
+    $("#axis").empty();
+    $("#title").text("Phoenix ASOS Station Max and Min Temperature Data");
+
+    fetch("/json/phoenix_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
+
+  } else if (menu.value == 'tempe') {
+
+    $("#chart").empty();
+    $("#title").empty();
+    $("#bars").empty();
+    $("#axis").empty();
+    $("#title").text("Tempe Station Max and Min Temperature Data");
+
+    fetch("/json/tempe_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
+
+    // alert(2);
+  } else if (menu.value == 'mesa') {
+    // alert(3);
+
+    $("#chart").empty();
+    $("#title").empty();
+    $("#bars").empty();
+    $("#axis").empty();
+    $("#title").text("Mesa Station Max and Min Temperature Data");
+
+    fetch("/json/mesa_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
+
+  }
+}
+
 function drawLMap(json) {
 
   var tempMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([33.2918, -112.1991], 7);
@@ -98,7 +138,7 @@ function drawLMap(json) {
          radius: 3.25,
          fillColor: getColor(feature.properties.name),
          color: "#000",
-         weight: setWeight(feature.properties.name),
+         weight: 0.5,
          opacity: 1,
          fillOpacity: 0.8
        })
@@ -106,82 +146,92 @@ function drawLMap(json) {
 
    }).addTo(tempMap);
 
-   stationLayer.on("click", function(e) {
+   // $('#exampleModalCenter').on('show.bs.modal', function(){
+   //     setTimeout(function() {
+   //       tempMap.invalidateSize();
+   //     }, 10);
+   //  });
 
-     console.log(e);
+   var modal = $("#exampleModalCenter");
 
-     if (e.layer.feature.properties.name === "Mesa Station") {
+    modal.on('shown.bs.modal', function(){
+      _.defer(tempMap.invalidateSize.bind(tempMap));
+    })
 
-       stationLayer.setStyle({weight:0.25});
-
-       e.layer.setStyle({weight:1});
-
-       $("#chart").empty();
-       $("#title").empty();
-       $("#bars").empty();
-       $("#axis").empty();
-       $("#title").text("Mesa Station Max and Min Temperature Data");
-
-       fetch("/json/mesa_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
-
-       d3.select("#tempe").attr("font-weight", null);
-       d3.select("#mesa").attr("font-weight", "bold");
-       d3.select("#phoenix").attr("font-weight", null);
-
-       d3.select("#phoenix_cirlce").attr("stroke", null);
-       d3.select("#tempe_circle").attr("stroke", null);
-       d3.select("#mesa_circle").attr("stroke", "black");
-
-     }
-
-     if (e.layer.feature.properties.name === "Phoenix ASOS Station") {
-
-       stationLayer.setStyle({weight:0.25});
-
-       e.layer.setStyle({weight:1});
-
-       $("#chart").empty();
-       $("#title").empty();
-       $("#bars").empty();
-       $("#axis").empty();
-       $("#title").text("Phoenix ASOS Station Max and Min Temperature Data");
-
-       fetch("/json/phoenix_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
-
-       d3.select("#tempe").attr("font-weight", null);
-       d3.select("#mesa").attr("font-weight", null);
-       d3.select("#phoenix").attr("font-weight", "bold");
-
-       d3.select("#phoenix_cirlce").attr("stroke", "black");
-       d3.select("#tempe_circle").attr("stroke", null);
-       d3.select("#mesa_circle").attr("stroke", null);
-
-     }
-
-     if (e.layer.feature.properties.name === "Tempe Station") {
-
-       stationLayer.setStyle({weight:0.25});
-
-       e.layer.setStyle({weight:1});
-
-       $("#chart").empty();
-       $("#title").empty();
-       $("#bars").empty();
-       $("#axis").empty();
-       $("#title").text("Tempe Station Max and Min Temperature Data");
-
-       fetch("/json/tempe_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
-
-       d3.select("#tempe").attr("font-weight", "bold");
-       d3.select("#mesa").attr("font-weight", null);
-       d3.select("#phoenix").attr("font-weight", null);
-
-       d3.select("#phoenix_cirlce").attr("stroke", null);
-       d3.select("#tempe_circle").attr("stroke", "black");
-       d3.select("#mesa_circle").attr("stroke", null);
-
-     }
-   });
+   // stationLayer.on("click", function(e) {
+   //
+   //   if (e.layer.feature.properties.name === "Mesa Station") {
+   //
+   //     stationLayer.setStyle({weight:0.25});
+   //
+   //     e.layer.setStyle({weight:1});
+   //
+   //     $("#chart").empty();
+   //     $("#title").empty();
+   //     $("#bars").empty();
+   //     $("#axis").empty();
+   //     $("#title").text("Mesa Station Max and Min Temperature Data");
+   //
+   //     fetch("/json/mesa_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
+   //
+   //     d3.select("#tempe").attr("font-weight", null);
+   //     d3.select("#mesa").attr("font-weight", "bold");
+   //     d3.select("#phoenix").attr("font-weight", null);
+   //
+   //     d3.select("#phoenix_cirlce").attr("stroke", null);
+   //     d3.select("#tempe_circle").attr("stroke", null);
+   //     d3.select("#mesa_circle").attr("stroke", "black");
+   //
+   //   }
+   //
+   //   if (e.layer.feature.properties.name === "Phoenix ASOS Station") {
+   //
+   //     stationLayer.setStyle({weight:0.25});
+   //
+   //     e.layer.setStyle({weight:1});
+   //
+   //     $("#chart").empty();
+   //     $("#title").empty();
+   //     $("#bars").empty();
+   //     $("#axis").empty();
+   //     $("#title").text("Phoenix ASOS Station Max and Min Temperature Data");
+   //
+   //     fetch("/json/phoenix_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
+   //
+   //     d3.select("#tempe").attr("font-weight", null);
+   //     d3.select("#mesa").attr("font-weight", null);
+   //     d3.select("#phoenix").attr("font-weight", "bold");
+   //
+   //     d3.select("#phoenix_cirlce").attr("stroke", "black");
+   //     d3.select("#tempe_circle").attr("stroke", null);
+   //     d3.select("#mesa_circle").attr("stroke", null);
+   //
+   //   }
+   //
+   //   if (e.layer.feature.properties.name === "Tempe Station") {
+   //
+   //     stationLayer.setStyle({weight:0.25});
+   //
+   //     e.layer.setStyle({weight:1});
+   //
+   //     $("#chart").empty();
+   //     $("#title").empty();
+   //     $("#bars").empty();
+   //     $("#axis").empty();
+   //     $("#title").text("Tempe Station Max and Min Temperature Data");
+   //
+   //     fetch("/json/tempe_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
+   //
+   //     d3.select("#tempe").attr("font-weight", "bold");
+   //     d3.select("#mesa").attr("font-weight", null);
+   //     d3.select("#phoenix").attr("font-weight", null);
+   //
+   //     d3.select("#phoenix_cirlce").attr("stroke", null);
+   //     d3.select("#tempe_circle").attr("stroke", "black");
+   //     d3.select("#mesa_circle").attr("stroke", null);
+   //
+   //   }
+   // });
 
    const legend = d3.select("#legend").append("svg")
                     .attr("width", 200)
@@ -193,8 +243,8 @@ function drawLMap(json) {
           .attr("cx", 22)
           .attr("cy", 50)
           .attr("r", 4)
-          .attr("id","phoenix_circle")
           .attr("stroke", "black")
+          .attr("id","phoenix_circle")
           .attr("fill", "red");
 
    legend.append("text")
@@ -202,13 +252,13 @@ function drawLMap(json) {
          .attr("y", 54)
          .attr("id", "phoenix")
          .style("font-size", "13px")
-         .attr("font-weight","bold")
          .text("Phoenix ASOS Station");
 
    legend.append("circle")
          .attr("cx", 22)
          .attr("cy", 65)
          .attr("r", 4)
+         .attr("stroke", "black")
          .attr("id","tempe_circle")
          .attr("fill", "blue");
 
@@ -223,6 +273,7 @@ function drawLMap(json) {
          .attr("cx", 22)
          .attr("cy", 80)
          .attr("r", 4)
+         .attr("stroke", "black")
          .attr("id","mesa_circle")
          .attr("fill", "green");
 
@@ -437,6 +488,7 @@ function drawChart(data) {
                 .attr("viewBox", "0 0 " + (width+100) + " 690")
                 .classed("svg-content", true)
                 .append("g")
+                // .attr("background", "#f2f2f2")
                 .attr("transform","translate(" + (3*margin.left) + "," + (margin.top/2) + ")");
 
   const svg1 = svg.append("svg")
@@ -450,21 +502,29 @@ function drawChart(data) {
   mini_y.domain([0, d3.max(data, function(d) { return Math.max(d.MaxTemperature, d.MinTemperature); })]);
 
   // x.nice();
-  // y.nice();
+  // y.nice(); interpolateRdYlBu #ff8000  #ff9933 #ff0000 - #ff3333 #e60000
 
   mini_x.nice();
 
   var colorScale = d3.scaleLinear()
-                     .domain(d3.range(1,3,1))
-                     .range(['orange','blue']);
+                     .domain([1,3,5])
+                     .range(['#ff0066','#ff9933','#ffff00']);
 
- var color = d3.scaleLinear().domain([1,3])
-               .interpolate(d3.interpolateHclLong)
-               .range(['#ffaa00','#0078b4']);
+ var colorScale2 = d3.scaleLinear()
+                    .domain([1,3,5])
+                    .range(['#ff8000','#ffff66']);
 
- var color2 = d3.scaleLinear().domain([1,3])
-                .interpolate(d3.interpolateHclLong)
-                .range(['#00dc00','#3c0096']);
+ // var color = d3.scaleLinear().domain([1,3])
+ //               .interpolate(d3.interpolateRdYlBu)
+ //               .range(['#a70028','#a3d1e5']);
+ //
+ // var color2 = d3.scaleLinear().domain([1,3])
+ //                .interpolate(d3.interpolateRdYlBu)
+ //                .range(['#fdc779','#64a0c8']);
+
+ // console.log(colorScale(1));
+ // console.log(colorScale(3));
+ // console.log(colorScale(5));
 
   var gradient = svg1.append("defs")
                     .append("linearGradient")
@@ -488,27 +548,27 @@ function drawChart(data) {
 
   gradient.append("stop")
                .attr("offset", "0%")
-               .attr("stop-color", color(1));
+               .attr("stop-color", colorScale(1));
 
   gradient.append("stop")
           .attr("offset", "50%")
-          .attr("stop-color", color(2));
+          .attr("stop-color", colorScale(3));
 
   gradient.append("stop")
           .attr("offset", "100%")
-          .attr("stop-color", color(3));
+          .attr("stop-color", colorScale(5));
 
   gradient2.append("stop")
                .attr("offset", "0%")
-               .attr("stop-color", color2(1));
+               .attr("stop-color", colorScale2(1));
 
   gradient2.append("stop")
           .attr("offset", "50%")
-          .attr("stop-color", color2(2));
+          .attr("stop-color", colorScale2(2));
 
   gradient2.append("stop")
           .attr("offset", "100%")
-          .attr("stop-color", color2(3));
+          .attr("stop-color", colorScale2(3));
 
   var leftHandle = 0;
   var rightHandle = 1140;
@@ -923,24 +983,26 @@ function createBars(data) {
 
    var monthTicks = d3.range(0,13,1);
 
+   // console.log(monthTicks);
+
    var monthLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"]
 
    monthTicks.forEach(function(tick, index) {
 
-   monthAxis.append("line")
-            .attr("x1", tick*40.83)
-            .attr("x2", tick*40.83)
-            .attr("y1", -3)
-            .attr("y2", 13)
-            .attr("stroke-width", "0.65px")
-            .attr("stroke", "black");
+          monthAxis.append("line")
+                   .attr("x1", tick*40.83)
+                   .attr("x2", tick*40.83)
+                   .attr("y1", -3)
+                   .attr("y2", 13)
+                   .attr("stroke-width", "0.65px")
+                   .attr("stroke", "black");
 
-  monthAxis.append("text")
-           .text(monthLabels[index])
-           .attr("class", "yearLabel")
-           .attr("x", tick*40.83)
-           .attr("y", 30)
-           .style("text-anchor", "middle");
+          monthAxis.append("text")
+                   .text(monthLabels[index])
+                   .attr("class", "yearLabel")
+                   .attr("x", tick*40.83)
+                   .attr("y", 30)
+                   .style("text-anchor", "middle");
 
    });
 
