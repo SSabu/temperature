@@ -144,3 +144,24 @@ label {
 #controls {
   padding-left: 40px;
 }
+
+.btn-primary {
+  background:#77cccc;
+}
+
+.btn-primary:hover {
+  background: #59c0c0;
+}
+
+.btn-primary:hover {
+  background: #59c0c0;
+}
+
+.btn-primary:active:focus {
+  background: #59c0c0;
+  color: #59c0c0;
+  background-color: #59c0c0;
+}
+.btn-primary:active{
+  box-shadow: none;
+}
