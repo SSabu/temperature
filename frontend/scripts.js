@@ -1,31 +1,203 @@
 fetch("/json/phoenix_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
 
-drawMap();
+fetch("/json/county.json").then(res => res.json()).then(function(data) { drawLMap(data); });
+
+// drawMap();
+
+function drawLMap(json) {
+
+  var tempMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([33.2918, -112.1991], 6);
+
+  L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/256/{z}/{x}/{y}?access_token={accessToken}', {
+  id: 'mapbox/light-v10',
+  accessToken: 'pk.eyJ1Ijoic2FidW1hZm9vIiwiYSI6ImNqMWE3cnlqcTA5dncyd216YjI0bnY4dGEifQ.fgmXgmkvialdBd3D405_BA'
+  }).addTo(tempMap);
+
+  var coStyle = {
+    fill: false,
+    weight: 1,
+    color: "#000000",
+          };
+
+  var temp = L.geoJSON(json, {style: coStyle}).addTo(tempMap);
+
+  function getColor(stype) {
+          switch (stype) {
+            case 'Tempe Station':
+              return  '#3333cc';
+            case 'Mesa Station':
+              return '#009900';
+            case 'Phoenix ASOS Station':
+              return '#ff0000';
+          }
+        };
+
+  var stations = [{
+    "type": "Feature",
+    "properties": {
+        "name": "Tempe Station",
+        "show_on_map": true,
+      },
+    "geometry": {
+        "type": "Point",
+        "coordinates": [-111.929, 33.4197]
+      }
+    }, {
+    "type": "Feature",
+    "properties": {
+        "name": "Mesa Station",
+        "show_on_map": true,
+    },
+    "geometry": {
+        "type": "Point",
+        "coordinates": [-111.818, 33.4114]
+     }
+   },
+   {
+    "type": "Feature",
+    "properties": {
+        "name": "Phoenix ASOS Station",
+        "show_on_map": true,
+    },
+    "geometry": {
+        "type": "Point",
+        "coordinates": [-112.016, 33.4333]
+     }
+   }];
+
+   function showTooltip(e) {
+      // e.target.setIcon(highlightMarker);
+      e.target.openPopup();
+    }
+
+   function hideTooltip(e) {
+     // e.target.setIcon(defaultMarker);
+     e.target.closePopup();
+   }
+
+   var stationLayer = L.geoJSON(stations, {
+     filter: function(feature,layer) {
+       return feature.properties.show_on_map;
+     },
+     pointToLayer: function(feature, latlng){
+       return L.circleMarker(latlng, {
+         radius: 2,
+         fillColor: getColor(feature.properties.name),
+         color: "#000",
+         weight: 0.25,
+         opacity: 1,
+         fillOpacity: 0.8
+       })
+     },
+
+   }).addTo(tempMap);
+
+   stationLayer.on("click", function(e) {
+
+     if (e.layer.feature.properties.name === "Mesa Station") {
+
+       $("#chart").empty();
+       $("#title").empty();
+       $("#bars").empty();
+       $("#axis").empty();
+       $("#title").text("Mesa Station Max and Min Temperature Data");
+
+       fetch("/json/mesa_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
+
+     }
+
+     if (e.layer.feature.properties.name === "Phoenix ASOS Station") {
+
+       $("#chart").empty();
+       $("#title").empty();
+       $("#bars").empty();
+       $("#axis").empty();
+       $("#title").text("Phoenix ASOS Station Max and Min Temperature Data");
+
+       fetch("/json/phoenix_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
+
+     }
+
+     if (e.layer.feature.properties.name === "Tempe Station") {
+
+       $("#chart").empty();
+       $("#title").empty();
+       $("#bars").empty();
+       $("#axis").empty();
+       $("#title").text("Tempe Station Max and Min Temperature Data");
+
+       fetch("/json/tempe_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
+
+     }
+   });
+
+   const legend = d3.select("#legend").append("svg")
+                    .attr("width", 100)
+                    .attr("height", 200)
+                    .append("g");
+
+    legend.append("circle")
+          .attr("cx", 12)
+          .attr("cy", 40)
+          .attr("r", 2)
+          .attr("fill", "red");
+
+   legend.append("text")
+         .attr("x", 17)
+         .attr("y", 42)
+         .style("font-size", "8px")
+         .text("Phoenix ASOS Station");
+
+   legend.append("circle")
+         .attr("cx", 12)
+         .attr("cy", 50)
+         .attr("r", 2)
+         .attr("fill", "blue");
+
+   legend.append("text")
+         .attr("x", 17)
+         .attr("y", 52)
+         .style("font-size", "8px")
+         .text("Tempe Station");
+
+   legend.append("circle")
+         .attr("cx", 12)
+         .attr("cy", 60)
+         .attr("r", 2)
+         .attr("fill", "green");
+
+   legend.append("text")
+         .attr("x", 17)
+         .attr("y", 62)
+         .style("font-size", "8px")
+         .text("Mesa Station");
+
+};
 
 function drawMap() {
 
   const width = 150;
   const height = 150;
 
-  const svg = d3.select("#map").append("svg")
-                .classed("svg-container", true)
-                .attr("preserveAspectRatio", "xMinYMin meet")
-                .attr("viewBox", "0 0 850 850")
-                .classed("svg-content", true)
-                .append("g")
-                .attr("transform", "translate(180,20)");
-
   // const svg = d3.select("#map").append("svg")
-  //               .attr("wdith", width)
-  //               .attr("height", height)
-  //               .append("g");
+  //               .classed("svg-container", true)
+  //               .attr("preserveAspectRatio", "xMinYMin meet")
+  //               .attr("viewBox", "0 0 850 850")
+  //               .classed("svg-content", true)
+  //               .append("g")
+  //               .attr("transform", "translate(180,20)");
+
+  const svg = d3.select("#map").append("svg")
+                .attr("wdith", width)
+                .attr("height", height)
+                .append("g");
 
   const tempe = [-111.929, 33.4197];
   const mesa = [-111.818, 33.4114];
   const phoenix = [-112.016, 33.4333];
 
   const projection = d3.geoTransverseMercator()
-                       .scale(10000)
+                       .scale(10)
                        .rotate([112, -35])
                        .translate([200,-90]);
 
@@ -147,8 +319,6 @@ function drawMap() {
 
 function drawChart(data) {
 
-  // console.log(data);
-
   var parseTime = d3.timeParse("%Y-%m-%d"),
   formatDate = d3.timeFormat("%Y-%m-%d"),
   bisectDate = d3.bisector(d => d.Date).left,
@@ -161,7 +331,6 @@ function drawChart(data) {
   });
 
   var firstDate = data[0]["Date"];
-  // console.log(firstDate);
   var firstYear = firstDate.getFullYear();
   var firstMonth = firstDate.getMonth();
   var firstDay = firstDate.getDate();
@@ -225,10 +394,26 @@ function drawChart(data) {
   mini_x.nice();
 
   var colorScale = d3.scaleLinear()
-                     .domain(d3.range(30, 130, 10))
-                     .range(['steelblue', 'gray', 'indianred']);
+                     .domain(d3.range(1,3,1))
+                     .range(['orange','blue']);
 
- console.log(d3.range(30, 120, 10));
+ var color = d3.scaleLinear().domain([1,3])
+               .interpolate(d3.interpolateHclLong)
+               .range(['#ffaa00','#0078b4']);
+
+ var color2 = d3.scaleLinear().domain([1,3])
+                .interpolate(d3.interpolateHclLong)
+                .range(['#00dc00','#3c0096']);
+
+  var gradient = svg1.append("defs")
+                    .append("linearGradient")
+                    .attr("id", "gradient")
+                    .attr("gradientTransform","rotate(90)");
+
+  var gradient2 = svg1.append("defs")
+                    .append("linearGradient")
+                    .attr("id", "gradient2")
+                    .attr("gradientTransform","rotate(90)");
 
   var focus = svg.append("g")
                  .attr("class", "focus");
@@ -239,6 +424,30 @@ function drawChart(data) {
   var context = svg.append("g")
                    .attr("class", "context")
                    .attr("transform", "translate("+ mini_margin.left+","+mini_margin.top+")");
+
+  gradient.append("stop")
+               .attr("offset", "0%")
+               .attr("stop-color", color(1));
+
+  gradient.append("stop")
+          .attr("offset", "50%")
+          .attr("stop-color", color(2));
+
+  gradient.append("stop")
+          .attr("offset", "100%")
+          .attr("stop-color", color(3));
+
+  gradient2.append("stop")
+               .attr("offset", "0%")
+               .attr("stop-color", color2(1));
+
+  gradient2.append("stop")
+          .attr("offset", "50%")
+          .attr("stop-color", color2(2));
+
+  gradient2.append("stop")
+          .attr("offset", "100%")
+          .attr("stop-color", color2(3));
 
   var leftHandle = 0;
   var rightHandle = 1140;
@@ -258,14 +467,14 @@ function drawChart(data) {
     .data([data])
     .attr("class", "line")
     // .style("stroke", function(d) { return colorScale(d.MaxTemperature)})
-    .style("stroke", "red")
+    .style("stroke", "url(#gradient)")
     .attr("d", valueline);
 
   focus1.append("path")
       .data([data])
       .attr("class", "line2")
       // .style("stroke", function(d) { return colorScale(d.MaxTemperature)})
-      .style("stroke", "steelblue")
+      .style("stroke", "url(#gradient2)")
       .attr("d", valueline2);
 
   focus.append("g")
@@ -297,14 +506,14 @@ function drawChart(data) {
   context.append("path")
          .data([data])
          .attr("class","line")
-         .style("stroke","red")
+         .style("stroke","url(#gradient)")
          .attr("transform", "translate(0,"+ (4*mini_height - 20)+")")
          .attr("d", mini_valueLine);
 
   context.append("path")
          .data([data])
          .attr("class","line2")
-         .style("stroke","steelblue")
+         .style("stroke","url(#gradient2)")
          .attr("transform", "translate(0,"+ (4*mini_height - 20)+")")
          .attr("d", mini_valueLine2);
 
@@ -332,7 +541,6 @@ function drawChart(data) {
                      .attr("stroke","#000")
                      .attr("cursor", "ew-resize")
                      .attr("d", brushResizePath);
-                     // .attr("d", d3.symbol().type(d3.symbolTriangle).size(75));
 
   var handleLeft = brushg.selectAll(".handle-custom-e")
                      .data([{type: "e"}])
@@ -341,7 +549,6 @@ function drawChart(data) {
                      .attr("stroke","#000")
                      .attr("cursor", "ew-resize")
                      .attr("d", brushResizePath);
-                     // .attr("d", d3.symbol().type(d3.symbolTriangle).size(75));
 
   brushg.call(brush.move, [new Date(firstYear+5, firstMonth-1, firstDay), new Date(nextYear+5, firstMonth-1, firstDay)].map(x));
 
@@ -370,8 +577,6 @@ function drawChart(data) {
 
     if (d3.event.selection && s[1] - s[0] >= xYear) {
 
-      // rotate(-90)  rotate(90)
-
       handleRight.attr("display", null).attr("transform","translate(" + [ s[0], -(mini_height/4) ] + ")").attr("stroke","black").attr("fill","black");
       handleLeft.attr("display", null).attr("transform","translate(" + [ s[1], -(mini_height/4) ] + ")").attr("stroke","black").attr("fill","black");
 
@@ -399,9 +604,6 @@ function drawChart(data) {
 
     if (s===null) { return; }
     else { x.domain(s.map(mini_x.invert, mini_x)); }
-
-    // context.select(".line").classed("active", function(d) { return s[0] <= d && d <= s[1]; });
-    // context.select(".line2").classed("active", function(d) { return s[0] <= d && d <= s[1]; });
 
     focus1.select(".line").attr("d", valueline);
     focus1.select(".line2").attr("d", valueline2);
@@ -447,8 +649,6 @@ function drawChart(data) {
           d0 = data[i - 1],
           d1 = data[i],
                   d = x0 - d0.Date > d1.Date - x0 ? d1 : d0;
-
-        // console.log(i, d0, d1);
 
         focus.select(".lineHover")
           .attr("transform", "translate(" + x(d.Date) + "," + height + ")");
@@ -643,7 +843,7 @@ function createBars(data) {
 
    var monthAxis = d3.select("#axis")
                      .append("svg")
-                     .attr("width", 400)
+                     .attr("width", 350)
                      .attr("height", 50)
                      .append("g")
                      .attr("transform", "translate(40,10)");
@@ -656,28 +856,26 @@ function createBars(data) {
              .attr("stroke-width", "0.65px")
              .attr("stroke", "black");
 
-   // console.log(274/12);
-
    var monthTicks = d3.range(0,13,1);
 
    var monthLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"]
 
    monthTicks.forEach(function(tick, index) {
 
-     monthAxis.append("line")
-              .attr("x1", tick*22.83)
-              .attr("x2", tick*22.83)
-              .attr("y1", -3)
-              .attr("y2", 5)
-              .attr("stroke-width", "0.65px")
-              .attr("stroke", "black");
+   monthAxis.append("line")
+            .attr("x1", tick*22.83)
+            .attr("x2", tick*22.83)
+            .attr("y1", -3)
+            .attr("y2", 5)
+            .attr("stroke-width", "0.65px")
+            .attr("stroke", "black");
 
-    monthAxis.append("text")
-             .text(monthLabels[index])
-             .attr("class", "yearLabel")
-             .attr("x", tick*22.83)
-             .attr("y", 15)
-             .style("text-anchor", "middle");
+  monthAxis.append("text")
+           .text(monthLabels[index])
+           .attr("class", "yearLabel")
+           .attr("x", tick*22.83)
+           .attr("y", 15)
+           .style("text-anchor", "middle");
 
    });
 
@@ -715,7 +913,5 @@ function createBars(data) {
                         .style("fill", function(d) { return colorScale(d.MaxTemperature); });
      }
    });
-
-
 
 };
