@@ -757,7 +757,7 @@ function drawChart1(data) {
 
   var colorScale = d3.scaleLinear()
                      .domain([1,2,3,4,5])
-                     .range(['#660066', '#ff0066','#ff9933','#ffff00', '#003399']);
+                     .range(['#660066', '#ff0066','#ff8000','#ffff00', '#003399']);
 
   var gradient = svg1.append("defs")
                     .append("linearGradient")
@@ -779,7 +779,7 @@ function drawChart1(data) {
                .attr("stop-color", colorScale(1));
 
   gradient.append("stop")
-          .attr("offset", "15%")
+          .attr("offset", "25%")
           .attr("stop-color", colorScale(2));
 
   gradient.append("stop")
@@ -1008,8 +1008,8 @@ function drawChart2(data) {
   mini_x.nice();
 
   var colorScale = d3.scaleLinear()
-                     .domain([1,2,3,4])
-                     .range(['#660066','#ff0066','#ff9933','#ffff00']);
+                     .domain([1,2,3,4,5])
+                     .range(['#000000','#990099','#ff0066','#ff8000','#ffff00']);
 
   var gradient2 = svg1.append("defs")
                     .append("linearGradient")
@@ -1030,17 +1030,21 @@ function drawChart2(data) {
            .attr("offset", "0%")
            .attr("stop-color", colorScale(1));
 
-  gradient2.append("stop")
-           .attr("offset", "30%")
-           .attr("stop-color", colorScale(2));
+ gradient2.append("stop")
+          .attr("offset", "20%")
+          .attr("stop-color", colorScale(2));
 
   gradient2.append("stop")
-           .attr("offset", "80%")
+           .attr("offset", "50%")
            .attr("stop-color", colorScale(3));
 
   gradient2.append("stop")
-           .attr("offset", "100%")
+           .attr("offset", "75%")
            .attr("stop-color", colorScale(4));
+
+  gradient2.append("stop")
+           .attr("offset", "100%")
+           .attr("stop-color", colorScale(5));
 
   var leftHandle = 0;
   var rightHandle = 1140;
