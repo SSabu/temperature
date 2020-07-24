@@ -18,31 +18,30 @@
       <script src="https://d3js.org/d3.v5.min.js"></script>
     </head>
     <body>
-
       <div class="containers">
         <div class="column1">
           <div id="title">Phoenix ASOS Station: Max and Min Temperature Data</div>
+          <form id="form">
+            <label class="radio-inline">
+              <span>Select Dataset:</span>
+              <input type="radio" name="chart" value="min" style="height: 11px; margin: 0px 2px 0px 5px;" checked>Min Temperature
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="chart" value="max" style="height: 11px; margin: 0px 2px 0px 5px;">Max Temperature
+            </label>
+          </form>
           <div id="chart"></div>
         </div>
         <div class="column2">
-          <!-- <div class="containers mapBox">
-            <div class ="column3">
-            <div id="mapTitle">Maricopa County Temperature Stations<br><span style="padding-left: 20px;">*click on station for data</span></div>
-              <div id="map"></div>
-            </div>
-            <div class="column4">
-              <div id="legend"></div>
-            </div>
-          </div> -->
           <div class="container-box">
             <div id="variations">Comparison of Seasonal Variation: Phoenix ASOS Station</div>
             <form>
               <label class="radio-inline">
                 <span id="box-title">Length of year with temperatures reaching:</span>
-                <input type="radio" name="optradio" value="90" style="height: 11px; margin: 0px 2px 0px 5px;" checked>90° or above
+                <input type="radio" name="bars" value="90" style="height: 11px; margin: 0px 2px 0px 5px;" checked>90° or above
               </label>
               <label class="radio-inline">
-                <input type="radio" name="optradio" value="100" style="height: 11px; margin: 0px 2px 0px 5px;">100° or above
+                <input type="radio" name="bars" value="100" style="height: 11px; margin: 0px 2px 0px 5px;">100° or above
               </label>
             </form>
           </div>
@@ -50,9 +49,7 @@
             <div id="bars"></div>
           </div>
           <div id="axis" style="height:50px;"></div>
-
           <div id="controls" class="containers">
-
             <div class="dropdown">
               <select class="browser-default custom-select" id="stationMenu">
                 <option selected>Select Station for Data</option>
@@ -61,16 +58,12 @@
                 <option value="mesa">Mesa Station</option>
               </select>
             </div>
-
               <div id="modal">
-
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
                   View Stations on Map
                 </button>
-
               </div>
           </div>
-
         </div>
       </div>
         <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -84,17 +77,12 @@
               </div>
               <div class="modal-body">
                 <div class ="column3">
-                <!-- <div id="mapTitle">Maricopa County Temperature Stations<br><span style="padding-left: 20px;">*click on station for data</span></div> -->
                   <div id="map"></div>
                 </div>
                 <div class="column4">
                   <div id="legend"></div>
                 </div>
               </div>
-              <!-- <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-              </div> -->
             </div>
           </div>
         </div>

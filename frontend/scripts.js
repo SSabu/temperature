@@ -1,15 +1,73 @@
-fetch("/json/phoenix_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
+d3.json("/json/phoenix_min_temp.json").then(function(data) { drawChart1(data); });
+
+d3.json("/json/phoenix_temp.json").then(function(data) { createBars(data); });
 
 fetch("/json/county.json").then(res => res.json()).then(function(data) { drawLMap(data); });
 
-// drawMap();
-
 var menu = document.getElementById("stationMenu");
+
 menu.addEventListener("change", generateData);
+
+selectData();
+
+function selectData() {
+
+  const buttons = $("input[name=chart]");
+
+  buttons.on("change", function(d) {
+
+    var station = $("#stationMenu").val();
+
+    switch(true) {
+
+      case (this.value === "min" && station === "Select Station for Data"):
+      $("#chart").empty();
+      d3.json("/json/phoenix_min_temp.json").then(function(data) { drawChart1(data); });
+      break;
+
+      case (this.value === "min" && station === "phoenix"):
+      $("#chart").empty();
+      d3.json("/json/phoenix_min_temp.json").then(function(data) { drawChart1(data); });
+      break;
+
+      case (this.value === "min" && station === "mesa"):
+      $("#chart").empty();
+      d3.json("/json/mesa_min_temp.json").then(function(data) { drawChart1(data); });
+      break;
+
+      case (this.value === "min" && station === "tempe"):
+      $("#chart").empty();
+      d3.json("/json/tempe_min_temp.json").then(function(data) { drawChart1(data); });
+      break;
+
+      case (this.value === "max" && station === "Select Station for Data"):
+      $("#chart").empty();
+      d3.json("/json/phoenix_max_temp.json").then(function(data) { drawChart2(data); });
+      break;
+
+      case (this.value === "max" && station === "phoenix"):
+      $("#chart").empty();
+      d3.json("/json/phoenix_max_temp.json").then(function(data) { drawChart2(data); });
+      break;
+
+      case (this.value === "max" && station === "mesa"):
+      $("#chart").empty();
+      d3.json("/json/mesa_max_temp.json").then(function(data) { drawChart2(data); });
+      break;
+
+      case (this.value === "max" && station === "tempe"):
+      $("#chart").empty();
+      d3.json("/json/tempe_max_temp.json").then(function(data) { drawChart2(data); });
+      break;
+
+    }
+
+  });
+
+}
 
 function generateData(event) {
   if (menu.value == 'phoenix') {
-    // alert(1);
 
     $("#chart").empty();
     $("#title").empty();
@@ -19,7 +77,9 @@ function generateData(event) {
     $("#title").text("Phoenix ASOS Station: Max and Min Temperature Data");
     $("#variations").text("Comparison of Seasonal Variation: Tempe Station");
 
-    fetch("/json/phoenix_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
+    d3.json("/json/phoenix_temp.json").then(function(data) { createBars(data); });
+
+    d3.json("/json/phoenix_min_temp.json").then(function(data) { drawChart1(data); });
 
   } else if (menu.value == 'tempe') {
 
@@ -31,11 +91,11 @@ function generateData(event) {
     $("#title").text("Tempe Station: Max and Min Temperature Data");
     $("#variations").text("Comparison of Seasonal Variation: Tempe Station");
 
-    fetch("/json/tempe_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
+    d3.json("/json/tempe_temp.json").then(function(data) { createBars(data); });
 
-    // alert(2);
+    d3.json("/json/tempe_min_temp.json").then(function(data) { drawChart1(data); });
+
   } else if (menu.value == 'mesa') {
-    // alert(3);
 
     $("#chart").empty();
     $("#title").empty();
@@ -45,7 +105,9 @@ function generateData(event) {
     $("#title").text("Mesa Station: Max and Min Temperature Data");
     $("#variations").text("Comparison of Seasonal Variation: Mesa Station");
 
-    fetch("/json/mesa_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
+    d3.json("/json/mesa_temp.json").then(function(data) { createBars(data); });
+
+    d3.json("/json/mesa_min_temp.json").then(function(data) { drawChart1(data); });
 
   }
 }
@@ -126,12 +188,10 @@ function drawLMap(json) {
    }];
 
    function showTooltip(e) {
-      // e.target.setIcon(highlightMarker);
       e.target.openPopup();
     }
 
    function hideTooltip(e) {
-     // e.target.setIcon(defaultMarker);
      e.target.closePopup();
    }
 
@@ -152,98 +212,11 @@ function drawLMap(json) {
 
    }).addTo(tempMap);
 
-   // $('#exampleModalCenter').on('show.bs.modal', function(){
-   //     setTimeout(function() {
-   //       tempMap.invalidateSize();
-   //     }, 10);
-   //  });
-
    var modal = $("#exampleModalCenter");
 
     modal.on('shown.bs.modal', function(){
       _.defer(tempMap.invalidateSize.bind(tempMap));
     })
-
-    // modal.on('shown.bs.modal', function(){
-    //     setTimeout(function() {
-    //         map.invalidateSize();
-    //    }, 10);
-    // })
-
-   // stationLayer.on("click", function(e) {
-   //
-   //   if (e.layer.feature.properties.name === "Mesa Station") {
-   //
-   //     stationLayer.setStyle({weight:0.25});
-   //
-   //     e.layer.setStyle({weight:1});
-   //
-   //     $("#chart").empty();
-   //     $("#title").empty();
-   //     $("#bars").empty();
-   //     $("#axis").empty();
-   //     $("#title").text("Mesa Station Max and Min Temperature Data");
-   //
-   //     fetch("/json/mesa_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
-   //
-   //     d3.select("#tempe").attr("font-weight", null);
-   //     d3.select("#mesa").attr("font-weight", "bold");
-   //     d3.select("#phoenix").attr("font-weight", null);
-   //
-   //     d3.select("#phoenix_cirlce").attr("stroke", null);
-   //     d3.select("#tempe_circle").attr("stroke", null);
-   //     d3.select("#mesa_circle").attr("stroke", "black");
-   //
-   //   }
-   //
-   //   if (e.layer.feature.properties.name === "Phoenix ASOS Station") {
-   //
-   //     stationLayer.setStyle({weight:0.25});
-   //
-   //     e.layer.setStyle({weight:1});
-   //
-   //     $("#chart").empty();
-   //     $("#title").empty();
-   //     $("#bars").empty();
-   //     $("#axis").empty();
-   //     $("#title").text("Phoenix ASOS Station Max and Min Temperature Data");
-   //
-   //     fetch("/json/phoenix_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
-   //
-   //     d3.select("#tempe").attr("font-weight", null);
-   //     d3.select("#mesa").attr("font-weight", null);
-   //     d3.select("#phoenix").attr("font-weight", "bold");
-   //
-   //     d3.select("#phoenix_cirlce").attr("stroke", "black");
-   //     d3.select("#tempe_circle").attr("stroke", null);
-   //     d3.select("#mesa_circle").attr("stroke", null);
-   //
-   //   }
-   //
-   //   if (e.layer.feature.properties.name === "Tempe Station") {
-   //
-   //     stationLayer.setStyle({weight:0.25});
-   //
-   //     e.layer.setStyle({weight:1});
-   //
-   //     $("#chart").empty();
-   //     $("#title").empty();
-   //     $("#bars").empty();
-   //     $("#axis").empty();
-   //     $("#title").text("Tempe Station Max and Min Temperature Data");
-   //
-   //     fetch("/json/tempe_temp.json").then(res => res.json()).then(function(data) { drawChart(data); createBars(data); });
-   //
-   //     d3.select("#tempe").attr("font-weight", "bold");
-   //     d3.select("#mesa").attr("font-weight", null);
-   //     d3.select("#phoenix").attr("font-weight", null);
-   //
-   //     d3.select("#phoenix_cirlce").attr("stroke", null);
-   //     d3.select("#tempe_circle").attr("stroke", "black");
-   //     d3.select("#mesa_circle").attr("stroke", null);
-   //
-   //   }
-   // });
 
    const legend = d3.select("#legend").append("svg")
                     .attr("width", 200)
@@ -251,13 +224,13 @@ function drawLMap(json) {
                     .append("g")
                     .attr("transform", "translate(10, 80)");
 
-    legend.append("circle")
-          .attr("cx", 22)
-          .attr("cy", 50)
-          .attr("r", 4)
-          .attr("stroke", "black")
-          .attr("id","phoenix_circle")
-          .attr("fill", "red");
+   legend.append("circle")
+         .attr("cx", 22)
+         .attr("cy", 50)
+         .attr("r", 4)
+         .attr("stroke", "black")
+         .attr("id","phoenix_circle")
+         .attr("fill", "red");
 
    legend.append("text")
          .attr("x", 30)
@@ -302,14 +275,6 @@ function drawMap() {
 
   const width = 150;
   const height = 150;
-
-  // const svg = d3.select("#map").append("svg")
-  //               .classed("svg-container", true)
-  //               .attr("preserveAspectRatio", "xMinYMin meet")
-  //               .attr("viewBox", "0 0 850 850")
-  //               .classed("svg-content", true)
-  //               .append("g")
-  //               .attr("transform", "translate(180,20)");
 
   const svg = d3.select("#map").append("svg")
                 .attr("wdith", width)
@@ -460,8 +425,6 @@ function drawChart(data) {
   var firstDay = firstDate.getDate();
   var nextYear = firstYear + 5;
 
-  var copy = ["MaxTemperature","MinTemperature"];
-
   var margin = {top: 20, right: 20, bottom: 30, left: 20},
     width = 940 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
@@ -500,8 +463,7 @@ function drawChart(data) {
                 .attr("viewBox", "0 0 " + (width+100) + " 690")
                 .classed("svg-content", true)
                 .append("g")
-                // .attr("background", "#f2f2f2")
-                .attr("transform","translate(" + (3*margin.left) + "," + (margin.top/2) + ")");
+                .attr("transform","translate(" + (3*margin.left) + ", 0)");
 
   const svg1 = svg.append("svg")
                 .attr("width", width)
@@ -513,9 +475,6 @@ function drawChart(data) {
   mini_x.domain(d3.extent(data, function(d) { return d.Date; }));
   mini_y.domain([0, d3.max(data, function(d) { return Math.max(d.MaxTemperature, d.MinTemperature); })]);
 
-  // x.nice();
-  // y.nice(); interpolateRdYlBu #ff8000  #ff9933 #ff0000 - #ff3333 #e60000
-
   mini_x.nice();
 
   var colorScale = d3.scaleLinear()
@@ -525,18 +484,6 @@ function drawChart(data) {
  var colorScale2 = d3.scaleLinear()
                     .domain([1,3,5])
                     .range(['#ff8000','#ffff66']);
-
- // var color = d3.scaleLinear().domain([1,3])
- //               .interpolate(d3.interpolateRdYlBu)
- //               .range(['#a70028','#a3d1e5']);
- //
- // var color2 = d3.scaleLinear().domain([1,3])
- //                .interpolate(d3.interpolateRdYlBu)
- //                .range(['#fdc779','#64a0c8']);
-
- // console.log(colorScale(1));
- // console.log(colorScale(3));
- // console.log(colorScale(5));
 
   var gradient = svg1.append("defs")
                     .append("linearGradient")
@@ -599,14 +546,12 @@ function drawChart(data) {
   focus1.append("path")
     .data([data])
     .attr("class", "line")
-    // .style("stroke", function(d) { return colorScale(d.MaxTemperature)})
     .style("stroke", "url(#gradient)")
     .attr("d", valueline);
 
   focus1.append("path")
       .data([data])
       .attr("class", "line2")
-      // .style("stroke", function(d) { return colorScale(d.MaxTemperature)})
       .style("stroke", "url(#gradient2)")
       .attr("d", valueline2);
 
@@ -744,70 +689,495 @@ function drawChart(data) {
 
     }
 
-    // tooltip call
+};
 
-    // tooltip(copy);
+function drawChart1(data) {
 
-    function tooltip(copy) {
+  $("input[value=min]").prop("checked",true);
 
-      var labels = focus.selectAll(".lineHoverText")
-        .data(copy);
+  var parseTime = d3.timeParse("%Y-%m-%d"),
+  formatDate = d3.timeFormat("%Y-%m-%d"),
+  bisectDate = d3.bisector(d => d.Date).left,
+  formatValue = d3.format(",.0f");
 
-      labels.enter().append("text")
-        .attr("class", "lineHoverText")
-        .style("fill", "black")
-        .attr("text-anchor", "start")
-        .attr("font-size",12)
-        .attr("dy", (_, i) => 1 + i * 2 + "em")
-        .merge(labels);
+  data.forEach(function(el) {
+    el.Date = parseTime(el.Date);
+    el.Temperature = +parseInt(el.Temperature);
+  });
 
-      var circles = focus.selectAll(".hoverCircle")
-        .data(copy);
+  var firstDate = data[0]["Date"];
+  var firstYear = firstDate.getFullYear();
+  var firstMonth = firstDate.getMonth();
+  var firstDay = firstDate.getDate();
+  var nextYear = firstYear + 5;
 
-      circles.enter().append("circle")
-        .attr("class", "hoverCircle")
-        .style("fill", "black")
-        .attr("r", 2.5)
-        .merge(circles);
+  var margin = {top: 20, right: 20, bottom: 30, left: 20},
+    width = 940 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
 
-      svg.selectAll(".overlay")
-        .on("mouseover", function() { focus.style("display", null); })
-        .on("mouseout", function() { focus.style("display", "none"); })
-        .on("mousemove", mousemove);
+  var mini_margin = {top: 10, right: 10, bottom: 10, left: 20},
+      mini_height = 150 - mini_margin.top - mini_margin.bottom;
 
-      function mousemove() {
+  var x = d3.scaleTime().range([0, width]);
+  var y = d3.scaleLinear().range([height, 0]);
 
-        var x0 = x.invert(d3.mouse(this)[0]),
-          i = bisectDate(data, x0, 1),
-          d0 = data[i - 1],
-          d1 = data[i],
-                  d = x0 - d0.Date > d1.Date - x0 ? d1 : d0;
+  var mini_x = d3.scaleTime().range([0,width]);
+  var mini_y = d3.scaleLinear().range([mini_height, 0]);
 
-        focus.select(".lineHover")
-          .attr("transform", "translate(" + x(d.Date) + "," + height + ")");
+  var xAxis = d3.axisBottom(x);
+  var mini_xAxis = d3.axisBottom(mini_x);
 
-        focus.select(".lineHoverDate")
-          .attr("transform",
-            "translate(" + x(d.Date) + "," + (height + margin.bottom) + ")")
-          .text(formatDate(d.Date));
+  var valueline = d3.line()
+      .x(function(d) { return x(d.Date); })
+      .y(function(d) { return y(d.Temperature); });
 
-        focus.selectAll(".hoverCircle")
-          .attr("cy", e => y(d[e]))
-          .attr("cx", x(d.Date));
+  var mini_valueLine = d3.line()
+                         .x(function(d) { return mini_x(d.Date); })
+                         .y(function(d) { return mini_y(d.Temperature); });
 
-        focus.selectAll(".lineHoverText")
-          .attr("transform",
-            "translate(" + (x(d.Date)) + "," + height / 2.5 + ")")
-          .text(e => e + " " + "º" + formatValue(d[e]));
+  const svg = d3.select("#chart").append("svg")
+                .classed("svg-container", true)
+                .attr("preserveAspectRatio", "xMinYMin meet")
+                .attr("viewBox", "0 0 " + (width+100) + " 690")
+                .classed("svg-content", true)
+                .append("g")
+                .attr("transform","translate(" + (3*margin.left) + ", 0)");
 
-        x(d.Date) > (width - width / 4)
-          ? focus1.selectAll("text.lineHoverText")
-            .attr("text-anchor", "end")
-            .attr("dx", -10)
-          : focus1.selectAll("text.lineHoverText")
-            .attr("text-anchor", "start")
-            .attr("dx", 10)
+  const svg1 = svg.append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+  x.domain(d3.extent(data, function(d) { return d.Date; }));
+  y.domain([ d3.min(data, function(d) { return Math.min(d.Temperature); }) - 5, d3.max(data, function(d) { return Math.max(d.Temperature); }) + 5 ]);
+
+  mini_x.domain(d3.extent(data, function(d) { return d.Date; }));
+  mini_y.domain([d3.min(data, function(d) { return Math.min(d.Temperature); }), d3.max(data, function(d) { return Math.max(d.Temperature); })]);
+
+  mini_x.nice();
+
+  var colorScale = d3.scaleLinear()
+                     .domain([1,2,3,4])
+                     .range(['#ff0066','#ff9933','#ffff00', '#003399']);
+
+  var gradient = svg1.append("defs")
+                    .append("linearGradient")
+                    .attr("id", "gradient")
+                    .attr("gradientTransform","rotate(90)");
+
+  var focus = svg.append("g")
+                 .attr("class", "focus");
+
+  var focus1 = svg1.append("g")
+                 .attr("class", "focus1");
+
+  var context = svg.append("g")
+                   .attr("class", "context")
+                   .attr("transform", "translate("+ mini_margin.left+","+mini_margin.top+")");
+
+  gradient.append("stop")
+               .attr("offset", "0%")
+               .attr("stop-color", colorScale(1));
+
+  gradient.append("stop")
+          .attr("offset", "50%")
+          .attr("stop-color", colorScale(2));
+
+  gradient.append("stop")
+          .attr("offset", "75%")
+          .attr("stop-color", colorScale(3));
+
+  gradient.append("stop")
+          .attr("offset", "100%")
+          .attr("stop-color", colorScale(4));
+
+  var leftHandle = 0;
+  var rightHandle = 1140;
+  var currentExtent = [0,0];
+
+  var brush = d3.brushX()
+                .extent([[leftHandle,0],[rightHandle, mini_height]])
+                .on("brush end", brushed);
+
+  focus1.append("g")
+      .attr("class", "grid")
+      .call(make_y_gridlines()
+          .tickSize(-width)
+          .tickFormat(""));
+
+  focus1.append("path")
+    .data([data])
+    .attr("class", "line")
+    .style("stroke", "url(#gradient)")
+    .attr("d", valueline);
+
+  focus.append("g")
+       .attr("class", "axis axis--x")
+       .attr("transform", "translate(0," + height + ")")
+       .call(xAxis);
+
+  focus.append("g")
+       .attr("class", "axis axis--y")
+       .call(d3.axisLeft(y));
+
+  focus.append("text")
+       .attr("transform", "rotate(-90)")
+       .attr("y", 0 - (2.5*margin.left))
+       .attr("x", 0 - (height/2))
+       .attr("dy", "1em")
+       .style("text-anchor", "middle")
+       .text("Temperature (°F)");
+
+  focus.append("text")
+       .attr("transform", "translate("+(width/2)+","+ (height + margin.top + 20)+")")
+       .style("text-anchor", "middle")
+       .text("Time");
+
+  function make_y_gridlines() {
+    return d3.axisLeft(y)
+        .ticks(5) };
+
+  context.append("path")
+         .data([data])
+         .attr("class","line")
+         .style("stroke","url(#gradient)")
+         .attr("transform", "translate(0,"+ (4*mini_height - 20)+")")
+         .attr("d", mini_valueLine);
+
+  context.append("g")
+         .attr("transform", "translate(0,"+ (5*mini_height - 20)+")")
+         .call(mini_xAxis);
+
+  var brushg = context.append("g")
+         .attr("class", "brush")
+         .on("click", brushed)
+         .call(brush)
+         .attr("transform", "translate(0,"+ (4*mini_height - 20)+")");
+
+  var brushResizePath = function(d) {
+    var e = +(d.type == "e"),
+        x = e ? 1 : -1,
+        y = mini_height / 2;
+      return "M" + (.5 * x) + "," + y + "A6,6 0 0 " + e + " " + (6.5 * x) + "," + (y + 6) + "V" + (2 * y - 6) + "A6,6 0 0 " + e + " " + (.5 * x) + "," + (2 * y) + "Z" + "M" + (2.5 * x) + "," + (y + 8) + "V" + (2 * y - 8) + "M" + (4.5 * x) + "," + (y + 8) + "V" + (2 * y - 8);
+  }
+
+  var handleRight = brushg.selectAll(".handle-custom-w")
+                     .data([{type: "w"}])
+                     .enter().append("path")
+                     .attr("class","handle-custom-w")
+                     .attr("stroke","#000")
+                     .attr("cursor", "ew-resize")
+                     .attr("d", brushResizePath);
+
+  var handleLeft = brushg.selectAll(".handle-custom-e")
+                     .data([{type: "e"}])
+                     .enter().append("path")
+                     .attr("class","handle-custom-e")
+                     .attr("stroke","#000")
+                     .attr("cursor", "ew-resize")
+                     .attr("d", brushResizePath);
+
+  brushg.call(brush.move, [new Date(firstYear+5, firstMonth-1, firstDay), new Date(nextYear+5, firstMonth-1, firstDay)].map(x));
+
+  context.append("text")
+         .text("*adjust extent and position of gray box to highlight data on main chart")
+         .attr("x", 0)
+         .attr("y", 0)
+         .style("font-size","11px")
+         .attr("transform", "translate(0,"+ (5*mini_height+16)+")");
+
+  function brushed() {
+
+    var s = d3.event.selection;
+
+    var p = currentExtent,
+      xYear = mini_x(new Date(firstYear-5, firstMonth, firstDay)),
+      left,
+      right;
+
+    if (s===null) {
+
+      handleRight.attr("display", "none");
+      handleLeft.attr("display", "none");
+
+    }
+
+    if (d3.event.selection && s[1] - s[0] >= xYear) {
+
+      handleRight.attr("display", null).attr("transform","translate(" + [ s[0], -(mini_height/4) ] + ")").attr("stroke","black").attr("fill","black");
+      handleLeft.attr("display", null).attr("transform","translate(" + [ s[1], -(mini_height/4) ] + ")").attr("stroke","black").attr("fill","black");
+
+      if (p[0] == s[0] && p[1] < s[1]) {
+        if (s[1] >= width) {
+          left = width - xYear;
+          right = width;
+          s = [left, right];
+        }
+        else {
+          left = s[1] - xYear/2;
+          right = s[1] + xYear/2;
+          s = [left, right];
+        }
       }
+      else if (p[1] == s[1] && p[0] > s[0]) {
+        if (s[0] <= 0) {
+          s = [0, xYear];
+        }
+        else {
+          s = [s[0] - xYear/2, s[0] + xYear/2];
+        }
+      }
+    }
+
+    if (s===null) { return; }
+    else { x.domain(s.map(mini_x.invert, mini_x)); }
+
+    focus1.select(".line").attr("d", valueline);
+    focus.select(".axis--x").call(xAxis);
+
+    }
+
+};
+
+
+function drawChart2(data) {
+
+  $("input[value=max]").prop("checked",true);
+
+  var parseTime = d3.timeParse("%Y-%m-%d"),
+  formatDate = d3.timeFormat("%Y-%m-%d"),
+  bisectDate = d3.bisector(d => d.Date).left,
+  formatValue = d3.format(",.0f");
+
+  data.forEach(function(el) {
+    el.Date = parseTime(el.Date);
+    el.Temperature = +parseInt(el.Temperature);
+  });
+
+  var firstDate = data[0]["Date"];
+  var firstYear = firstDate.getFullYear();
+  var firstMonth = firstDate.getMonth();
+  var firstDay = firstDate.getDate();
+  var nextYear = firstYear + 5;
+
+  var margin = {top: 20, right: 20, bottom: 30, left: 20},
+    width = 940 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+  var mini_margin = {top: 10, right: 10, bottom: 10, left: 20},
+      mini_height = 150 - mini_margin.top - mini_margin.bottom;
+
+  var x = d3.scaleTime().range([0, width]);
+  var y = d3.scaleLinear().range([height, 0]);
+
+  var mini_x = d3.scaleTime().range([0,width]);
+  var mini_y = d3.scaleLinear().range([mini_height, 0]);
+
+  var xAxis = d3.axisBottom(x);
+  var mini_xAxis = d3.axisBottom(mini_x);
+
+  var valueline = d3.line()
+      .x(function(d) { return x(d.Date); })
+      .y(function(d) { return y(d.Temperature); });
+
+  var mini_valueLine = d3.line()
+                         .x(function(d) { return mini_x(d.Date); })
+                         .y(function(d) { return mini_y(d.Temperature); });
+
+  const svg = d3.select("#chart").append("svg")
+                .classed("svg-container", true)
+                .attr("preserveAspectRatio", "xMinYMin meet")
+                .attr("viewBox", "0 0 " + (width+100) + " 690")
+                .classed("svg-content", true)
+                .append("g")
+                .attr("transform","translate(" + (3*margin.left) + ", 0)");
+
+  const svg1 = svg.append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+  x.domain(d3.extent(data, function(d) { return d.Date; }));
+  y.domain([ d3.min(data, function(d) { return Math.min(d.Temperature); }) - 5, d3.max(data, function(d) { return Math.max(d.Temperature); }) + 5 ]);
+
+  mini_x.domain(d3.extent(data, function(d) { return d.Date; }));
+  mini_y.domain([d3.min(data, function(d) { return Math.min(d.Temperature); }), d3.max(data, function(d) { return Math.max(d.Temperature); })]);
+
+  mini_x.nice();
+
+  var colorScale = d3.scaleLinear()
+                     .domain([1,2,3])
+                     .range(['#ff0066','#ff9933','#ffff00']);
+
+  var gradient2 = svg1.append("defs")
+                    .append("linearGradient")
+                    .attr("id", "gradient2")
+                    .attr("gradientTransform","rotate(90)");
+
+  var focus = svg.append("g")
+                 .attr("class", "focus");
+
+  var focus1 = svg1.append("g")
+                 .attr("class", "focus1");
+
+  var context = svg.append("g")
+                   .attr("class", "context")
+                   .attr("transform", "translate("+ mini_margin.left+","+mini_margin.top+")");
+
+  gradient2.append("stop")
+               .attr("offset", "0%")
+               .attr("stop-color", colorScale(1));
+
+  gradient2.append("stop")
+          .attr("offset", "50%")
+          .attr("stop-color", colorScale(2));
+
+  gradient2.append("stop")
+          .attr("offset", "100%")
+          .attr("stop-color", colorScale(3));
+
+  var leftHandle = 0;
+  var rightHandle = 1140;
+  var currentExtent = [0,0];
+
+  var brush = d3.brushX()
+                .extent([[leftHandle,0],[rightHandle, mini_height]])
+                .on("brush end", brushed);
+
+  focus1.append("g")
+      .attr("class", "grid")
+      .call(make_y_gridlines()
+          .tickSize(-width)
+          .tickFormat(""));
+
+  focus1.append("path")
+    .data([data])
+    .attr("class", "line")
+    .style("stroke", "url(#gradient2)")
+    .attr("d", valueline);
+
+  focus.append("g")
+       .attr("class", "axis axis--x")
+       .attr("transform", "translate(0," + height + ")")
+       .call(xAxis);
+
+  focus.append("g")
+       .attr("class", "axis axis--y")
+       .call(d3.axisLeft(y));
+
+  focus.append("text")
+       .attr("transform", "rotate(-90)")
+       .attr("y", 0 - (2.5*margin.left))
+       .attr("x", 0 - (height/2))
+       .attr("dy", "1em")
+       .style("text-anchor", "middle")
+       .text("Temperature (°F)");
+
+  focus.append("text")
+       .attr("transform", "translate("+(width/2)+","+ (height + margin.top + 20)+")")
+       .style("text-anchor", "middle")
+       .text("Time");
+
+  function make_y_gridlines() {
+    return d3.axisLeft(y)
+        .ticks(5) };
+
+  context.append("path")
+         .data([data])
+         .attr("class","line")
+         .style("stroke","url(#gradient2)")
+         .attr("transform", "translate(0,"+ (4*mini_height - 20)+")")
+         .attr("d", mini_valueLine);
+
+  context.append("g")
+         .attr("transform", "translate(0,"+ (5*mini_height - 20)+")")
+         .call(mini_xAxis);
+
+  var brushg = context.append("g")
+         .attr("class", "brush")
+         .on("click", brushed)
+         .call(brush)
+         .attr("transform", "translate(0,"+ (4*mini_height - 20)+")");
+
+  var brushResizePath = function(d) {
+    var e = +(d.type == "e"),
+        x = e ? 1 : -1,
+        y = mini_height / 2;
+      return "M" + (.5 * x) + "," + y + "A6,6 0 0 " + e + " " + (6.5 * x) + "," + (y + 6) + "V" + (2 * y - 6) + "A6,6 0 0 " + e + " " + (.5 * x) + "," + (2 * y) + "Z" + "M" + (2.5 * x) + "," + (y + 8) + "V" + (2 * y - 8) + "M" + (4.5 * x) + "," + (y + 8) + "V" + (2 * y - 8);
+  }
+
+  var handleRight = brushg.selectAll(".handle-custom-w")
+                     .data([{type: "w"}])
+                     .enter().append("path")
+                     .attr("class","handle-custom-w")
+                     .attr("stroke","#000")
+                     .attr("cursor", "ew-resize")
+                     .attr("d", brushResizePath);
+
+  var handleLeft = brushg.selectAll(".handle-custom-e")
+                     .data([{type: "e"}])
+                     .enter().append("path")
+                     .attr("class","handle-custom-e")
+                     .attr("stroke","#000")
+                     .attr("cursor", "ew-resize")
+                     .attr("d", brushResizePath);
+
+  brushg.call(brush.move, [new Date(firstYear+5, firstMonth-1, firstDay), new Date(nextYear+5, firstMonth-1, firstDay)].map(x));
+
+  context.append("text")
+         .text("*adjust extent and position of gray box to highlight data on main chart")
+         .attr("x", 0)
+         .attr("y", 0)
+         .style("font-size","11px")
+         .attr("transform", "translate(0,"+ (5*mini_height+16)+")");
+
+  function brushed() {
+
+    var s = d3.event.selection;
+
+    var p = currentExtent,
+      xYear = mini_x(new Date(firstYear-5, firstMonth, firstDay)),
+      left,
+      right;
+
+    if (s===null) {
+
+      handleRight.attr("display", "none");
+      handleLeft.attr("display", "none");
+
+    }
+
+    if (d3.event.selection && s[1] - s[0] >= xYear) {
+
+      handleRight.attr("display", null).attr("transform","translate(" + [ s[0], -(mini_height/4) ] + ")").attr("stroke","black").attr("fill","black");
+      handleLeft.attr("display", null).attr("transform","translate(" + [ s[1], -(mini_height/4) ] + ")").attr("stroke","black").attr("fill","black");
+
+      if (p[0] == s[0] && p[1] < s[1]) {
+        if (s[1] >= width) {
+          left = width - xYear;
+          right = width;
+          s = [left, right];
+        }
+        else {
+          left = s[1] - xYear/2;
+          right = s[1] + xYear/2;
+          s = [left, right];
+        }
+      }
+      else if (p[1] == s[1] && p[0] > s[0]) {
+        if (s[0] <= 0) {
+          s = [0, xYear];
+        }
+        else {
+          s = [s[0] - xYear/2, s[0] + xYear/2];
+        }
+      }
+    }
+
+    if (s===null) { return; }
+    else { x.domain(s.map(mini_x.invert, mini_x)); }
+
+    focus1.select(".line").attr("d", valueline);
+    focus.select(".axis--x").call(xAxis);
+
     }
 
 };
@@ -821,6 +1191,9 @@ function createBars(data) {
   function twoDigit(n) { return (n < 10 ? '0' : '') + n; }
 
   data.forEach(function(obj) {
+
+    obj["Date"] = parseDate(obj["Date"]);
+
     let date = obj["Date"];
 
     obj["Date"] = '' + date.getFullYear() + "-" + twoDigit(date.getMonth()+1) + "-" + twoDigit(date.getDate());
@@ -831,8 +1204,6 @@ function createBars(data) {
   });
 
   const years = Object.keys(dataObj);
-
-  // console.log(dataObj);
 
   const posObj = {};
 
@@ -976,7 +1347,7 @@ function createBars(data) {
                    .attr("height", gridSize*2)
                    .style("fill", function(d) { return colorScale(d.MaxTemperature); });
 
-   const buttons = d3.selectAll('input');
+   const buttons = $("input[name=bars]");
 
    var monthAxis = d3.select("#axis")
                      .append("svg")
@@ -994,8 +1365,6 @@ function createBars(data) {
              .attr("stroke", "black");
 
    var monthTicks = d3.range(0,13,1);
-
-   // console.log(monthTicks);
 
    var monthLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"]
 
