@@ -757,7 +757,7 @@ function drawChart1(data) {
 
   var colorScale = d3.scaleLinear()
                      .domain([1,2,3,4,5])
-                     .range(['#660066', '#ff0066','#ff8000','#ffff00', '#003399']);
+                     .range(['#660066', '#ff4d94','#ff8000','#ffff00', '#003399']);
 
   var gradient = svg1.append("defs")
                     .append("linearGradient")
