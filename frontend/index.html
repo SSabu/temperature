@@ -31,24 +31,6 @@
             </label>
           </form>
           <div id="chart"></div>
-        </div>
-        <div class="column2">
-          <div class="container-box">
-            <div id="variations">Comparison of Seasonal Variation: Phoenix ASOS Station</div>
-            <form>
-              <label class="radio-inline">
-                <span id="box-title">Length of year with temperatures reaching:</span>
-                <input type="radio" name="bars" value="90" style="height: 11px; margin: 0px 2px 0px 5px;" checked>90° or above
-              </label>
-              <label class="radio-inline">
-                <input type="radio" name="bars" value="100" style="height: 11px; margin: 0px 2px 0px 5px;">100° or above
-              </label>
-            </form>
-          </div>
-          <div class="scroll">
-            <div id="bars"></div>
-          </div>
-          <div id="axis" style="height:50px;"></div>
           <div id="controls" class="containers">
             <div class="dropdown">
               <select class="browser-default custom-select" id="stationMenu">
@@ -64,6 +46,25 @@
                 </button>
               </div>
           </div>
+        </div>
+        <div class="column2">
+          <div class="container-box">
+            <div id="variations">Comparison of Seasonal Variation: Phoenix ASOS Station</div>
+            <form>
+              <label class="radio-inline">
+                <span id="box-title">Length of year with temperatures reaching:</span>
+                <input type="radio" name="bars" value="90" style="height: 11px; margin: 0px 2px 0px 5px;" checked>90° or above
+              </label>
+              <label class="radio-inline">
+                <input type="radio" name="bars" value="100" style="height: 11px; margin: 0px 2px 0px 5px;">100° or above
+              </label>
+            </form>
+          </div>
+          <!-- <div class="scroll"> -->
+            <div id="bars"></div>
+          <!-- </div> -->
+          <div id="axis" style="height:50px;"></div>
+
         </div>
       </div>
         <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">

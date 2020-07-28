@@ -99,7 +99,7 @@ div.scroll {
 }
 
 .yearLabel {
-  font-size: 13px;
+  font-size: 22px;
 }
 
 .container-box {
@@ -128,7 +128,7 @@ label {
 }
 
 #controls {
-  padding-left: 40px;
+  padding-left: 195px;
 }
 
 .btn-primary {
@@ -162,4 +162,8 @@ label {
 
 #title {
   padding-bottom: 10px;
+}
+
+#exampleModalLongTitle {
+  padding-left: 90px;
 }

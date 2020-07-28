@@ -1202,6 +1202,10 @@ function createBars(data) {
 
   $("input[value=90]").prop("checked",true);
 
+  var station = $("#stationMenu").val();
+
+  // console.log("in create bars", station);
+
   var parseDate = d3.timeParse("%Y-%m-%d");
 
   function twoDigit(n) { return (n < 10 ? '0' : '') + n; }
@@ -1300,28 +1304,46 @@ function createBars(data) {
 
   var margin = {top: 40, right: 50, bottom: 70, left: 50};
 
-  var w = 255;
+  // var w = 255;
 
   var gridSize = 5.4;
 
-  var h = 3650;
+  var h;
+
+  if (station === "phoenix" || station === "Select Station for Data") {
+    h = 505;
+  }
+
+  if (station === "tempe") {
+    h = 470;
+  }
+
+  if (station === "mesa") {
+    h = 340;
+  }
 
   var svg = d3.select("#bars")
               .append("svg")
-              .attr("width", 540)
+              .attr("width", 640)
               .attr("height", h + margin.left + margin.right)
               .append("g")
-              .attr("transform", "translate(40,-10)");
+              .attr("transform", "translate(60,-5) scale(0.49)");
 
-  let distance = 30;
+  let distance = 10;
+
+  // console.log(years);
+
+  var yearExtremes = [years[0], years[years.length-1]];
+
+  // console.log(yearExtremes);
 
   years.forEach(function(year) {
 
     var yearLine = svg.append("line")
                       .attr("x1", 0)
-                      .attr("x2", 490)
-                      .attr("y1", distance+5)
-                      .attr("y2", distance+5)
+                      .attr("x2", 980)
+                      .attr("y1", distance+2.5)
+                      .attr("y2", distance+2.5)
                       .attr("stroke-width", "0.65px")
                       .attr("stroke", "black");
 
@@ -1334,21 +1356,48 @@ function createBars(data) {
                      .attr("stroke", "black");
 
     var endLine = svg.append("line")
-                     .attr("x1", 490)
-                     .attr("x2", 490)
+                     .attr("x1", 980)
+                     .attr("x2", 980)
                      .attr("y1", distance)
                      .attr("y2", distance+9)
                      .attr("stroke-width", "0.65px")
                      .attr("stroke", "black");
 
+    // var yearLabel = svg.append("text")
+    //                    .text(year)
+    //                    .attr("class", "yearLabel")
+    //                    .attr("x", -8)
+    //                    .attr("y", distance+8)
+    //                    .style("text-anchor", "end");
+
+    distance += 10;
+
+  });
+
+  var yearDistance = 18;
+
+  yearExtremes.forEach(function(year) {
+
     var yearLabel = svg.append("text")
                        .text(year)
                        .attr("class", "yearLabel")
-                       .attr("x", -8)
-                       .attr("y", distance+8)
+                       .attr("x", -40)
+                       .attr("y", yearDistance+8)
                        .style("text-anchor", "end");
 
-    distance += 30;
+
+
+    if (station === "phoenix" || station === "Select Station for Data") {
+      yearDistance +=1216;
+    }
+
+    if (station === "tempe") {
+      yearDistance +=1124;
+    }
+
+    if (station === "mesa") {
+      yearDistance +=876;
+    }
 
   });
 
@@ -1356,25 +1405,25 @@ function createBars(data) {
                    .data(dataset90)
                    .enter()
                    .append("rect")
-                   .attr("x", function(d) { return (d.Day-1)*gridSize/4; })
-                   .attr("y", function(d) { return (d.Index+1)*30; })
+                   .attr("x", function(d) { return (d.Day-1)*gridSize/2; })
+                   .attr("y", function(d) { return (d.Index+1)*10; })
                    .attr("class", "hour")
-                   .attr("width", gridSize/4)
-                   .attr("height", gridSize*2)
+                   .attr("width", gridSize/2)
+                   .attr("height", gridSize)
                    .style("fill", function(d) { return colorScale(d.MaxTemperature); });
 
    const buttons = $("input[name=bars]");
 
    var monthAxis = d3.select("#axis")
                      .append("svg")
-                     .attr("width", 600)
+                     .attr("width", 640)
                      .attr("height", 50)
                      .append("g")
-                     .attr("transform", "translate(40,10)");
+                     .attr("transform", "translate(60,10) scale(0.49)");
 
     monthAxis.append("line")
              .attr("x1", 0)
-             .attr("x2", 490)
+             .attr("x2", 980)
              .attr("y1", 5)
              .attr("y2", 5)
              .attr("stroke-width", "0.65px")
@@ -1387,8 +1436,8 @@ function createBars(data) {
    monthTicks.forEach(function(tick, index) {
 
           monthAxis.append("line")
-                   .attr("x1", tick*40.83)
-                   .attr("x2", tick*40.83)
+                   .attr("x1", tick*81.66)
+                   .attr("x2", tick*81.66)
                    .attr("y1", -3)
                    .attr("y2", 13)
                    .attr("stroke-width", "0.65px")
@@ -1397,8 +1446,9 @@ function createBars(data) {
           monthAxis.append("text")
                    .text(monthLabels[index])
                    .attr("class", "yearLabel")
-                   .attr("x", tick*40.83)
+                   .attr("x", tick*81.66)
                    .attr("y", 30)
+                   // .style("font-size", "22px")
                    .style("text-anchor", "middle");
 
    });
@@ -1413,11 +1463,11 @@ function createBars(data) {
                         .data(dataset90)
                         .enter()
                         .append("rect")
-                        .attr("x", function(d) { return (d.Day-1)*gridSize/4; })
-                        .attr("y", function(d) { return (d.Index+1)*30; })
+                        .attr("x", function(d) { return (d.Day-1)*gridSize/2; })
+                        .attr("y", function(d) { return (d.Index+1)*10; })
                         .attr("class", "hour")
-                        .attr("width", gridSize/4)
-                        .attr("height", gridSize*2)
+                        .attr("width", gridSize/2)
+                        .attr("height", gridSize)
                         .style("fill", function(d) { return colorScale(d.MaxTemperature); });
      }
 
@@ -1429,11 +1479,11 @@ function createBars(data) {
                         .data(dataset100)
                         .enter()
                         .append("rect")
-                        .attr("x", function(d) { return (d.Day-1)*gridSize/4; })
-                        .attr("y", function(d) { return (d.Index+1)*30; })
+                        .attr("x", function(d) { return (d.Day-1)*gridSize/2; })
+                        .attr("y", function(d) { return (d.Index+1)*10; })
                         .attr("class", "hour")
-                        .attr("width", gridSize/4)
-                        .attr("height", gridSize*2)
+                        .attr("width", gridSize/2)
+                        .attr("height", gridSize)
                         .style("fill", function(d) { return colorScale(d.MaxTemperature); });
      }
    });
